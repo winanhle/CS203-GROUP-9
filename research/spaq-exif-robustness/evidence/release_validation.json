@@ -1,0 +1,56 @@
+{
+  "completed_utc": "2026-11-09T12:54:18.720501+00:00",
+  "status": "SUCCESS",
+  "checks": {
+    "manifest_sha256": "abff8b1a5f7d2e74d0c8874655fbe40d5e75de75bf61e65753c7085cee15800d",
+    "manifest_rows": 11125,
+    "split_counts": {
+      "test": 2228,
+      "train": 7786,
+      "val": 1111
+    },
+    "unique_image_names": 11125,
+    "groups_crossing_splits": 0,
+    "evidence_status": {
+      "e0_frozen_r50_s20261109.json": "SUCCESS",
+      "e1_frozen_r50_s20261109.json": "SUCCESS",
+      "e2_frozen_r50_s20261109.json": "SUCCESS",
+      "e3_frozen_r50_s20261109.json": "SUCCESS",
+      "e4_frozen_r50_s20261109.json": "SUCCESS",
+      "missingness_all_s20261109.json": "SUCCESS",
+      "analysis_summary_s20261109.json": "SUCCESS",
+      "kaggle_smoke_v2.json": "EXECUTION_VERIFIED",
+      "phase7_baseline_v01_audit.json": "SUCCESS",
+      "phase7_multiseed_summary.json": "SUCCESS",
+      "phase7_metadata_diagnostics.json": "SUCCESS",
+      "phase7_kaggle_backbone_v1.json": "EXECUTION_VERIFIED",
+      "phase7_kaggle_cached_v1.json": "EXECUTION_VERIFIED",
+      "phase7_topiq_nr_koniq.json": "SUCCESS"
+    },
+    "verified_analysis_outputs": 10,
+    "verified_kaggle_outputs": {
+      "smoke_checkpoint.pt": "a7c69a6e0387e774a5ce46278c6a98963cac09632c8c662ce5e9ee68fefb487f",
+      "smoke_summary.json": "bcb0ccd972d7ada5f732f0395357c6388dafb8e34cf534ac75d48000df3426fd",
+      "spaq-exif-robustness-smoke.log": "0d4fd377845c685d3ac8915238f999152820d0a0610d3aa4a895ea386795d365"
+    },
+    "verified_phase7_kaggle_outputs": {
+      "phase7_kaggle_backbone_v1.json": 8,
+      "phase7_kaggle_cached_v1.json": 29
+    },
+    "verified_topiq_outputs": {
+      "artifacts\\runs\\phase7_topiq_nr_koniq\\validation_predictions.csv": "1fdcd329fd37940698c036f784322fd7c7cc1e3c44833a438cd7dd99af0ec781",
+      "artifacts\\runs\\phase7_topiq_nr_koniq\\test_predictions.csv": "6689873dcb070e8bec05e39a374cb58589df73b2e25c6fb4adb1b6efcabf66ce"
+    },
+    "ignored_sensitive_targets": [
+      "artifacts/features/spaq_resnet50_imagenet_v2_abff8b1a.npz",
+      "artifacts/kaggle_phase7_assets/resnet50-11ad3fa6.pth",
+      "artifacts/runs/e1_frozen_r50_s20261109/best.pt",
+      "data/raw/iqa_pytorch_datasets/spaq.tgz",
+      "data/raw/q_align/spaq.tar",
+      "kaggle/kernel/kernel-metadata.json",
+      "kaggle/phase7_backbone/kernel-metadata.json",
+      "kaggle/phase7_cached/kernel-metadata.json"
+    ],
+    "missing_required_docs": []
+  }
+}

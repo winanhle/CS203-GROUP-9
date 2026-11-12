@@ -1,0 +1,122 @@
+{
+  "compared_utc": "2026-11-08T20:28:36.249526+00:00",
+  "original_dir": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected",
+  "qalign_archive": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\q_align\\spaq.tar",
+  "records": [
+    {
+      "byte_identical": false,
+      "dhash_distance": 33,
+      "image_name": "00001.jpg",
+      "original": {
+        "bytes": 3047460,
+        "embedded_exif_entries": 13,
+        "format": "JPEG",
+        "height": 3024,
+        "mode": "RGB",
+        "sha256": "0a1dcb4b6759130f41a089eaafa53176463f02141f685dfcabbe1e136fea969b",
+        "width": 4032
+      },
+      "qalign": {
+        "bytes": 155478,
+        "embedded_exif_entries": 0,
+        "format": "JPEG",
+        "height": 1008,
+        "mode": "RGB",
+        "sha256": "9c664d111d14f6549f2fecf3b9b1207c6d5a80e16a6213eed46c73f18d36c675",
+        "width": 756
+      }
+    },
+    {
+      "byte_identical": false,
+      "dhash_distance": 1,
+      "image_name": "00914.jpg",
+      "original": {
+        "bytes": 4685010,
+        "embedded_exif_entries": 17,
+        "format": "JPEG",
+        "height": 3120,
+        "mode": "RGB",
+        "sha256": "e95ce7a4326ea6c5ade78b31c25b00e7f15e807acb34b3aef8dfa0e79c0189a1",
+        "width": 4160
+      },
+      "qalign": {
+        "bytes": 319139,
+        "embedded_exif_entries": 0,
+        "format": "JPEG",
+        "height": 780,
+        "mode": "RGB",
+        "sha256": "e4e0ec04658f57d7c72833ddfeb04f2b1659d7012548cd2c276eb8bdb8d0a4e8",
+        "width": 1040
+      }
+    },
+    {
+      "byte_identical": false,
+      "dhash_distance": 0,
+      "image_name": "03461.jpg",
+      "original": {
+        "bytes": 4585028,
+        "embedded_exif_entries": 10,
+        "format": "JPEG",
+        "height": 3456,
+        "mode": "RGB",
+        "sha256": "9f349fd6a6b6f776f2ce7f48aa939c2309b828bf8a0bfae3d0c40eb35acddd6a",
+        "width": 3456
+      },
+      "qalign": {
+        "bytes": 185903,
+        "embedded_exif_entries": 0,
+        "format": "JPEG",
+        "height": 864,
+        "mode": "RGB",
+        "sha256": "b397097159517b736bfd9f6ed98aab14bd1b9e2a3180bd62390a7436c46f01a8",
+        "width": 864
+      }
+    },
+    {
+      "byte_identical": false,
+      "dhash_distance": 30,
+      "image_name": "05293.jpg",
+      "original": {
+        "bytes": 2187614,
+        "embedded_exif_entries": 13,
+        "format": "JPEG",
+        "height": 2988,
+        "mode": "RGB",
+        "sha256": "022a145ec9ba3ccfa515d3b745bae9e54cb88bb302c0c7d8ea644471a847d7ce",
+        "width": 5312
+      },
+      "qalign": {
+        "bytes": 193369,
+        "embedded_exif_entries": 0,
+        "format": "JPEG",
+        "height": 1328,
+        "mode": "RGB",
+        "sha256": "7f97be6bdf96affbd13aac938a26ea9d5fbf0bf3ac8459321137e4ac5ababe48",
+        "width": 747
+      }
+    },
+    {
+      "byte_identical": false,
+      "dhash_distance": 0,
+      "image_name": "11125.jpg",
+      "original": {
+        "bytes": 3176783,
+        "embedded_exif_entries": 11,
+        "format": "JPEG",
+        "height": 4608,
+        "mode": "RGB",
+        "sha256": "dfe08aaf3360eebbb913fb2c6ebf328b2e8763b8e2947d230fbcf80c25ff5878",
+        "width": 3456
+      },
+      "qalign": {
+        "bytes": 227382,
+        "embedded_exif_entries": 0,
+        "format": "JPEG",
+        "height": 1152,
+        "mode": "RGB",
+        "sha256": "2e623dbc62bf994ff195b3daa6e130cf98cfb45b1fd551416087d7e2a95dd103",
+        "width": 864
+      }
+    }
+  ]
+}

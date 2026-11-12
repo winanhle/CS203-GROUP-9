@@ -1,0 +1,57 @@
+{
+  "completed_utc": "2026-11-09T12:49:27.390032+00:00",
+  "status": "SUCCESS",
+  "experiment": "TOPIQ_NR_KONIQ_CROSS_DATASET_EXPLORATORY",
+  "role": "stronger image-only IQA baseline explored only after H1-H4 core tests",
+  "not_used": "topiq_nr-spaq checkpoint, because SPAQ training overlap would invalidate held-out comparison",
+  "model": "pyiqa topiq_nr / CFANet ResNet-50 / KonIQ-trained default",
+  "pyiqa_version": "0.1.16",
+  "checkpoint_sha256": "9a73138beb3748dd6a83365610ac88fa1cd53225342c77fc9ed44a3be461354c",
+  "manifest_sha256": "abff8b1a5f7d2e74d0c8874655fbe40d5e75de75bf61e65753c7085cee15800d",
+  "validation_rows": 1111,
+  "test_rows": 2228,
+  "selection_and_calibration": "single affine raw-score-to-MOS mapping fit on validation only; no model fitting; test inferred once",
+  "affine_calibration": {
+    "slope": 82.80311900800642,
+    "intercept": 17.767383928550128
+  },
+  "validation_metrics": {
+    "srcc": 0.8065839681092993,
+    "plcc": 0.8107042141728146,
+    "mae": 9.540784296635957
+  },
+  "test_metrics": {
+    "srcc": 0.8200520057740867,
+    "plcc": 0.8268536071842113,
+    "mae": 9.0968747700231
+  },
+  "raw_test_metrics": {
+    "srcc": 0.8200520057740867,
+    "plcc": 0.8268536071842112,
+    "mae": 49.847906620103856
+  },
+  "runtime_seconds": {
+    "validation": 161.56766900000002,
+    "test": 1074.5409056999997
+  },
+  "environment": {
+    "python": "3.12.10",
+    "torch": "2.14.1+cu130",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+  },
+  "artifacts": {
+    "validation_predictions": {
+      "path": "artifacts\\runs\\phase7_topiq_nr_koniq\\validation_predictions.csv",
+      "sha256": "1fdcd329fd37940698c036f784322fd7c7cc1e3c44833a438cd7dd99af0ec781"
+    },
+    "test_predictions": {
+      "path": "artifacts\\runs\\phase7_topiq_nr_koniq\\test_predictions.csv",
+      "sha256": "6689873dcb070e8bec05e39a374cb58589df73b2e25c6fb4adb1b6efcabf66ce"
+    }
+  },
+  "limitations": [
+    "Cross-dataset pretrained inference is not a matched training-budget comparison.",
+    "TOPIQ sees compact re-encoded SPAQ images and uses its official default inference preprocessing.",
+    "This analysis is exploratory and was initiated only after the preregistered core hypotheses were tested."
+  ]
+}

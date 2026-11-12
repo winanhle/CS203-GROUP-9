@@ -1,0 +1,116 @@
+{
+  "annotation_files": [
+    {
+      "archive_path": "SPAQ/Annotations/Scene category labels.xlsx",
+      "selected_path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected\\SPAQ__Annotations__Scene category labels.xlsx",
+      "sha256": "1ec32dda553133ab1f758d7b53103bc2b50b6c0e139744e0fabf65af79993311",
+      "size": 451797
+    },
+    {
+      "archive_path": "SPAQ/Annotations/EXIF_tags.xlsx",
+      "selected_path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected\\SPAQ__Annotations__EXIF_tags.xlsx",
+      "sha256": "4ffb751e56453230f4aafc8f24ad9b1e28c70bfc7fc7f56272b504d71d8291e4",
+      "size": 1252560
+    },
+    {
+      "archive_path": "SPAQ/Annotations/MOS and Image attribute scores.xlsx",
+      "selected_path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected\\SPAQ__Annotations__MOS and Image attribute scores.xlsx",
+      "sha256": "44c8867593e7397f1de79badedca1e8964c8f7e5c01def4fde967c7d11cc8806",
+      "size": 575801
+    }
+  ],
+  "archive": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\spaq.tgz",
+  "archive_size": 34841101349,
+  "duplicate_member_names": [],
+  "image_count": 11125,
+  "image_name_first_20": [
+    "SPAQ/TestImage/00001.jpg",
+    "SPAQ/TestImage/00002.jpg",
+    "SPAQ/TestImage/00003.jpg",
+    "SPAQ/TestImage/00004.jpg",
+    "SPAQ/TestImage/00005.jpg",
+    "SPAQ/TestImage/00006.jpg",
+    "SPAQ/TestImage/00007.jpg",
+    "SPAQ/TestImage/00008.jpg",
+    "SPAQ/TestImage/00009.jpg",
+    "SPAQ/TestImage/00010.jpg",
+    "SPAQ/TestImage/00011.jpg",
+    "SPAQ/TestImage/00012.jpg",
+    "SPAQ/TestImage/00013.jpg",
+    "SPAQ/TestImage/00014.jpg",
+    "SPAQ/TestImage/00015.jpg",
+    "SPAQ/TestImage/00016.jpg",
+    "SPAQ/TestImage/00017.jpg",
+    "SPAQ/TestImage/00018.jpg",
+    "SPAQ/TestImage/00019.jpg",
+    "SPAQ/TestImage/00020.jpg"
+  ],
+  "image_name_last_20": [
+    "SPAQ/TestImage/11106.jpg",
+    "SPAQ/TestImage/11107.jpg",
+    "SPAQ/TestImage/11108.jpg",
+    "SPAQ/TestImage/11109.jpg",
+    "SPAQ/TestImage/11110.jpg",
+    "SPAQ/TestImage/11111.jpg",
+    "SPAQ/TestImage/11112.jpg",
+    "SPAQ/TestImage/11113.jpg",
+    "SPAQ/TestImage/11114.jpg",
+    "SPAQ/TestImage/11115.jpg",
+    "SPAQ/TestImage/11116.jpg",
+    "SPAQ/TestImage/11117.jpg",
+    "SPAQ/TestImage/11118.jpg",
+    "SPAQ/TestImage/11119.jpg",
+    "SPAQ/TestImage/11120.jpg",
+    "SPAQ/TestImage/11121.jpg",
+    "SPAQ/TestImage/11122.jpg",
+    "SPAQ/TestImage/11123.jpg",
+    "SPAQ/TestImage/11124.jpg",
+    "SPAQ/TestImage/11125.jpg"
+  ],
+  "inspected_utc": "2026-11-08T20:27:24.099863+00:00",
+  "member_count": 11131,
+  "member_type_counts": {
+    "directory": 3,
+    "file": 11128
+  },
+  "selected_image_samples": [
+    {
+      "archive_path": "SPAQ/TestImage/00914.jpg",
+      "selected_path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected\\SPAQ__TestImage__00914.jpg",
+      "sha256": "e95ce7a4326ea6c5ade78b31c25b00e7f15e807acb34b3aef8dfa0e79c0189a1",
+      "size": 4685010
+    },
+    {
+      "archive_path": "SPAQ/TestImage/03461.jpg",
+      "selected_path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected\\SPAQ__TestImage__03461.jpg",
+      "sha256": "9f349fd6a6b6f776f2ce7f48aa939c2309b828bf8a0bfae3d0c40eb35acddd6a",
+      "size": 4585028
+    },
+    {
+      "archive_path": "SPAQ/TestImage/05293.jpg",
+      "selected_path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected\\SPAQ__TestImage__05293.jpg",
+      "sha256": "022a145ec9ba3ccfa515d3b745bae9e54cb88bb302c0c7d8ea644471a847d7ce",
+      "size": 2187614
+    },
+    {
+      "archive_path": "SPAQ/TestImage/11125.jpg",
+      "selected_path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected\\SPAQ__TestImage__11125.jpg",
+      "sha256": "dfe08aaf3360eebbb913fb2c6ebf328b2e8763b8e2947d230fbcf80c25ff5878",
+      "size": 3176783
+    },
+    {
+      "archive_path": "SPAQ/TestImage/00001.jpg",
+      "selected_path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected\\SPAQ__TestImage__00001.jpg",
+      "sha256": "0a1dcb4b6759130f41a089eaafa53176463f02141f685dfcabbe1e136fea969b",
+      "size": 3047460
+    }
+  ],
+  "suffix_counts": {
+    ".jpg": 11125,
+    ".xlsx": 3
+  },
+  "uncompressed_file_bytes": 35476869087,
+  "unique_image_basenames": 11125,
+  "unique_image_paths": 11125,
+  "unique_image_stems": 11125
+}

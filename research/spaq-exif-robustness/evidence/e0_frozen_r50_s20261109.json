@@ -1,0 +1,48 @@
+{
+  "completed_utc": "2026-11-08T20:51:45.623346+00:00",
+  "status": "SUCCESS",
+  "experiment": "E0",
+  "track": "RESOURCE_ADAPTED_FROZEN_RESNET50_IMAGENET_V2",
+  "source_commit": "539261783524d6b0b3828247cefad915b8eac41b",
+  "best_epoch": 52,
+  "epochs_completed": 82,
+  "runtime_seconds": 5.0887788999971235,
+  "parameter_count": 528897,
+  "metadata_parameter_count": 0,
+  "validation_metrics": {
+    "srcc": 0.8119338911057409,
+    "plcc": 0.814150991827299,
+    "mae": 9.662627893992097
+  },
+  "test_metrics": {
+    "srcc": 0.8304821038968001,
+    "plcc": 0.8306293862948034,
+    "mae": 9.348914758360792
+  },
+  "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "gpu_peak_allocated_bytes": 147658240,
+  "python": "3.12.10",
+  "torch": "2.14.1+cu130",
+  "artifacts": {
+    "config": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e0_frozen_r50_s20261109\\config.json",
+      "sha256": "ef7728f254c6c7cac3b7c0f9807af8cb09e9f14b76d6edabe18b9caae90e3b21"
+    },
+    "best_checkpoint": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e0_frozen_r50_s20261109\\best.pt",
+      "sha256": "ce021767cb0245ba1229c708dd19de7fed9b7be4c643c3f01949749df6855600"
+    },
+    "last_checkpoint": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e0_frozen_r50_s20261109\\last.pt",
+      "sha256": "0521d797ea09b082f45d19088b0b07fb6c6372d950385032ad148a0d6dad0b01"
+    },
+    "epoch_log": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e0_frozen_r50_s20261109\\epochs.jsonl",
+      "sha256": "5deaa3e6b10a3c14e02558fd08356b0d54ba84a870f0f038329a7189abd90760"
+    },
+    "predictions": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e0_frozen_r50_s20261109\\predictions.csv",
+      "sha256": "d212e533f552b978be85bc3974a268085e79c77a7dd744d7087f3e8630674982"
+    }
+  }
+}

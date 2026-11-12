@@ -1,0 +1,160 @@
+{
+  "completed_utc": "2026-11-09T12:00:40.198422+00:00",
+  "status": "EXECUTION_VERIFIED",
+  "kernel": "longltrnhong/spaq-phase-7-matched-backbone-pair",
+  "kernel_version": 1,
+  "source_commit": "b092e64768c65de5443018f0d3e2f3a50ad7829a",
+  "summary": {
+    "completed_utc": "2026-11-09T10:53:34.742134+00:00",
+    "status": "SUCCESS",
+    "experiment": "H4_MATCHED_BACKBONE_PAIR",
+    "exploratory_single_seed": true,
+    "test_evaluation_policy": "each arm evaluated once after validation-only checkpoint selection",
+    "controls": [
+      "pretrained weights",
+      "manifest split",
+      "seed",
+      "train/eval transforms",
+      "head",
+      "validation policy"
+    ],
+    "independent_variable": "frozen backbone versus trainable ResNet-50 layer4",
+    "manifest_sha256": "abff8b1a5f7d2e74d0c8874655fbe40d5e75de75bf61e65753c7085cee15800d",
+    "pretrained_weights_sha256": "11ad3fa62ca79e40addfd354a8ec4b7c75143b3038b8d2a807fbc68deab379ca",
+    "split_counts": {
+      "train": 7786,
+      "val": 1111,
+      "test": 2228
+    },
+    "config": {
+      "manifest": null,
+      "image_root": null,
+      "weights": null,
+      "epochs": 12,
+      "patience": 3,
+      "batch_size": 32,
+      "eval_batch_size": 64,
+      "workers": 2,
+      "head_lr": 0.001,
+      "backbone_lr": 0.0001,
+      "weight_decay": 0.0001,
+      "smoke": false
+    },
+    "environment": {
+      "python": "3.13.16",
+      "torch": "2.11.0+cu130",
+      "torchvision": "0.26.0+cu130",
+      "device": "cuda",
+      "gpu": "Tesla T4"
+    },
+    "arms": [
+      {
+        "mode": "frozen",
+        "seed": 20261109,
+        "best_epoch": 5,
+        "epochs_completed": 8,
+        "runtime_seconds": 970.491208819,
+        "trainable_parameters": 524801,
+        "validation_metrics": {
+          "srcc": 0.8297731674774522,
+          "plcc": 0.8324901861021654,
+          "mae": 9.118453949448442
+        },
+        "test_metrics": {
+          "srcc": 0.8513447109035284,
+          "plcc": 0.8528077623015038,
+          "mae": 8.760263430794009
+        },
+        "gpu_peak_allocated_bytes": 530106880,
+        "artifacts": {
+          "checkpoint": {
+            "path": "frozen_best.pt",
+            "sha256": "c4408ceea11a98c0674cba56e3c3e162e4268ef8a83dd5847cff3f2fe12b7b41"
+          },
+          "epoch_log": {
+            "path": "frozen_epochs.jsonl",
+            "sha256": "f0f8b665411c11683aadfac426d9903677b1bf8126438a10a659291f17179548"
+          },
+          "predictions": {
+            "path": "frozen_predictions.csv",
+            "sha256": "381beea7afdef6eda9b8c7ea5798d9f2639735edff722cea08a2958d64e27cf1"
+          }
+        }
+      },
+      {
+        "mode": "layer4_finetuned",
+        "seed": 20261109,
+        "best_epoch": 1,
+        "epochs_completed": 4,
+        "runtime_seconds": 294.91722322600003,
+        "trainable_parameters": 15489537,
+        "validation_metrics": {
+          "srcc": 0.8702311632311439,
+          "plcc": 0.8705148849936143,
+          "mae": 8.542151724079726
+        },
+        "test_metrics": {
+          "srcc": 0.8818660855057396,
+          "plcc": 0.8845467850626471,
+          "mae": 8.185635716739634
+        },
+        "gpu_peak_allocated_bytes": 710830592,
+        "artifacts": {
+          "checkpoint": {
+            "path": "layer4_finetuned_best.pt",
+            "sha256": "7c0c08e7c8a31a8e7d4eecc967a39bb09c723b04dcfdbe101f38fbee15a0a78e"
+          },
+          "epoch_log": {
+            "path": "layer4_finetuned_epochs.jsonl",
+            "sha256": "96e6d234565d10e3ec19b452548739175b8e00f61d3cf8bdb755a994401cf43f"
+          },
+          "predictions": {
+            "path": "layer4_finetuned_predictions.csv",
+            "sha256": "4b9c10be052412f0a627ca18786554326f4657725c52ff3a4ab70af37a26aeb8"
+          }
+        }
+      }
+    ]
+  },
+  "verified_arms": [
+    {
+      "mode": "frozen",
+      "prediction_rows": 2228,
+      "prediction_ids_match_frozen_test": true,
+      "labels_match_manifest": true,
+      "recomputed_test_metrics": {
+        "srcc": 0.8513447109035284,
+        "plcc": 0.8528077623015042,
+        "mae": 8.760263430794009
+      },
+      "checkpoint_state_tensor_count": 4,
+      "checkpoint_trainable_state_only": true,
+      "epoch_log_rows": 8
+    },
+    {
+      "mode": "layer4_finetuned",
+      "prediction_rows": 2228,
+      "prediction_ids_match_frozen_test": true,
+      "labels_match_manifest": true,
+      "recomputed_test_metrics": {
+        "srcc": 0.8818660855057396,
+        "plcc": 0.8845467850626473,
+        "mae": 8.185635716739634
+      },
+      "checkpoint_state_tensor_count": 64,
+      "checkpoint_trainable_state_only": true,
+      "epoch_log_rows": 4
+    }
+  ],
+  "downloaded_artifacts": {
+    "backbone_pair_summary.json": "fd8c46e7046ff9b88ab86902a991ad0f9c5ef57a805936ded937d72d1423b496",
+    "frozen_best.pt": "c4408ceea11a98c0674cba56e3c3e162e4268ef8a83dd5847cff3f2fe12b7b41",
+    "frozen_epochs.jsonl": "f0f8b665411c11683aadfac426d9903677b1bf8126438a10a659291f17179548",
+    "frozen_predictions.csv": "381beea7afdef6eda9b8c7ea5798d9f2639735edff722cea08a2958d64e27cf1",
+    "layer4_finetuned_best.pt": "7c0c08e7c8a31a8e7d4eecc967a39bb09c723b04dcfdbe101f38fbee15a0a78e",
+    "layer4_finetuned_epochs.jsonl": "96e6d234565d10e3ec19b452548739175b8e00f61d3cf8bdb755a994401cf43f",
+    "layer4_finetuned_predictions.csv": "4b9c10be052412f0a627ca18786554326f4657725c52ff3a4ab70af37a26aeb8",
+    "spaq-phase-7-matched-backbone-pair.log": "6bcebaf21c461346e5245540dc69265e5d7c1e6f10633491348fbfa56f7f93c7"
+  },
+  "interpretation": "Single-seed exploratory matched comparison; not a multi-seed confirmatory backbone claim."
+}

@@ -1,0 +1,16 @@
+{
+  "project": "spaq-exif-robustness",
+  "phase": "G0",
+  "last_successful_gate": null,
+  "current_task_id": "G0-001",
+  "git_commit": null,
+  "data_manifest_sha256": null,
+  "active_kaggle_kernel": null,
+  "active_kaggle_version": null,
+  "active_kaggle_status": "NONE",
+  "active_run_id": null,
+  "last_valid_checkpoint": null,
+  "outstanding_blockers": [],
+  "next_command": "Inspect sources and create the project ledger.",
+  "last_updated_utc": null
+}

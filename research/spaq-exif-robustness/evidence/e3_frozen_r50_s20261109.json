@@ -1,0 +1,48 @@
+{
+  "completed_utc": "2026-11-08T20:52:31.043487+00:00",
+  "status": "SUCCESS",
+  "experiment": "E3",
+  "track": "RESOURCE_ADAPTED_FROZEN_RESNET50_IMAGENET_V2",
+  "source_commit": "539261783524d6b0b3828247cefad915b8eac41b",
+  "best_epoch": 67,
+  "epochs_completed": 97,
+  "runtime_seconds": 6.82283639999514,
+  "parameter_count": 528913,
+  "metadata_parameter_count": 16,
+  "validation_metrics": {
+    "srcc": 0.8128408993961398,
+    "plcc": 0.8156713744913549,
+    "mae": 9.552308711353236
+  },
+  "test_metrics": {
+    "srcc": 0.8344961356106763,
+    "plcc": 0.8345150053075748,
+    "mae": 9.253364533560495
+  },
+  "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "gpu_peak_allocated_bytes": 147663872,
+  "python": "3.12.10",
+  "torch": "2.14.1+cu130",
+  "artifacts": {
+    "config": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e3_frozen_r50_s20261109\\config.json",
+      "sha256": "728529293939c805a630d0cb90c83af2ac16d6ddc2846e97203dd20f3a5fcc9b"
+    },
+    "best_checkpoint": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e3_frozen_r50_s20261109\\best.pt",
+      "sha256": "849745092550d38a2948008dad30ecd61ada9be5702a5b809eb122f71c110413"
+    },
+    "last_checkpoint": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e3_frozen_r50_s20261109\\last.pt",
+      "sha256": "b71b72877ca4dd323f50e92a1114fca6cf8361b7cb37de3078b657ebda04331c"
+    },
+    "epoch_log": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e3_frozen_r50_s20261109\\epochs.jsonl",
+      "sha256": "bea5090a35414ff9d0892df52926acd27457d773064b001a028978c280e9f70a"
+    },
+    "predictions": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e3_frozen_r50_s20261109\\predictions.csv",
+      "sha256": "97dab6bd024abbc8c0ca3354505f2d97676544404ddc318e5939d36abb233951"
+    }
+  }
+}

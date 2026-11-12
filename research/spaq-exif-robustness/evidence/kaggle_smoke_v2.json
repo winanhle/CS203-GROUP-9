@@ -1,0 +1,42 @@
+{
+  "completed_utc": "2026-11-09T07:27:30.121568+00:00",
+  "status": "EXECUTION_VERIFIED",
+  "kernel": "longltrnhong/spaq-exif-robustness-smoke",
+  "kernel_version": 2,
+  "private_dataset": "longltrnhong/spaq-compact-verified",
+  "source_commit": "57b3ee3dc5a352fea19a9441332a6e78d2db896e",
+  "python": "3.13.16",
+  "torch": "2.11.0+cu130",
+  "torchvision": "0.26.0+cu130",
+  "gpu": "Tesla T4",
+  "gpu_total_bytes": 15636037632,
+  "gpu_peak_allocated_bytes": 580253184,
+  "working_disk_total_bytes": 20957446144,
+  "working_disk_free_bytes": 20806270976,
+  "input_mode": "kaggle_expanded_tar",
+  "input_image_count": 11125,
+  "sample_count": 300,
+  "sample_tree_sha256": "cb2fe0f3a59efda58deefc4ed2af8ad4bcf7ef84fc8c5a8bd6fc7d27c4098f5d",
+  "expected_sample_tree_sha256": "cb2fe0f3a59efda58deefc4ed2af8ad4bcf7ef84fc8c5a8bd6fc7d27c4098f5d",
+  "manifest_sha256": "abff8b1a5f7d2e74d0c8874655fbe40d5e75de75bf61e65753c7085cee15800d",
+  "integrity_seconds": 18.002800271000012,
+  "inference_300_seconds": 11.093271054000013,
+  "train_20_steps_seconds": 2.3926502080000205,
+  "train_loss_first": 49.82850646972656,
+  "train_loss_last": 38.13600540161133,
+  "checkpoint_reload_succeeded": true,
+  "optimizer_resume_step_succeeded": true,
+  "resume_step_loss": 46.17753601074219,
+  "projected_11125_inference_seconds": 411.3754682525005,
+  "projection_with_20_percent_buffer_seconds": 493.6505619030006,
+  "downloaded_artifacts": {
+    "smoke_checkpoint.pt": "a7c69a6e0387e774a5ce46278c6a98963cac09632c8c662ce5e9ee68fefb487f",
+    "smoke_summary.json": "bcb0ccd972d7ada5f732f0395357c6388dafb8e34cf534ac75d48000df3426fd",
+    "spaq-exif-robustness-smoke.log": "0d4fd377845c685d3ac8915238f999152820d0a0610d3aa4a895ea386795d365"
+  },
+  "failed_attempt": {
+    "kernel_version": 1,
+    "status": "CANCEL_ACKNOWLEDGED",
+    "reason": "The full 11,125-image tree hash exceeded the explicit 600-second kernel timeout before output creation; v2 bounded integrity verification to the exact 300-image smoke sample."
+  }
+}

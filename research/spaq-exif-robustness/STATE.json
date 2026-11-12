@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "project": "spaq-exif-robustness",
+  "phase": "PHASE_7",
+  "gate": "G7_COMPLETE",
+  "last_successful_gate": "G7-007",
+  "current_task_id": null,
+  "git_commit": "2a378d824106c0c69f9d6c718376b544b7db3561",
+  "git_remote": "https://github.com/longlth2297/EXIF-Metadata-Help-Smartphone-Image-Quality-Assessment-.git",
+  "data_manifest_sha256": "abff8b1a5f7d2e74d0c8874655fbe40d5e75de75bf61e65753c7085cee15800d",
+  "active_kaggle_kernel": "longltrnhong/spaq-phase-7-cached-multiseed",
+  "active_kaggle_version": 1,
+  "active_kaggle_status": "COMPLETE",
+  "active_run_id": "phase7_kaggle_cached_v1",
+  "last_valid_checkpoint": "artifacts/kaggle_download/phase7_backbone_v1/layer4_finetuned_best.pt",
+  "outstanding_blockers": [],
+  "next_command": ".\\.venv312\\Scripts\\python.exe -m pytest -q; .\\.venv312\\Scripts\\python.exe scripts\\validate_release.py; git status --short",
+  "last_updated_utc": "2026-11-09T12:53:00Z"
+}
+

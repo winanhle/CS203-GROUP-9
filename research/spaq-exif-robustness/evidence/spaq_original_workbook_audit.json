@@ -1,0 +1,344 @@
+{
+  "audited_utc": "2026-11-08T20:27:16.055622+00:00",
+  "column_comparison": [
+    {
+      "flattened_name": "Image name",
+      "maximum_absolute_difference": null,
+      "mismatch_count": 0,
+      "position": 0,
+      "raw_name": "Image name"
+    },
+    {
+      "flattened_name": "MOS",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 1,
+      "raw_name": "MOS"
+    },
+    {
+      "flattened_name": "Brightness",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 2,
+      "raw_name": "Brightness"
+    },
+    {
+      "flattened_name": "Colorfulness",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 3,
+      "raw_name": "Colorfulness"
+    },
+    {
+      "flattened_name": "Contrast",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 4,
+      "raw_name": "Contrast"
+    },
+    {
+      "flattened_name": "Noisiness",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 5,
+      "raw_name": "Noisiness"
+    },
+    {
+      "flattened_name": "Sharpness",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 6,
+      "raw_name": "Sharpness"
+    },
+    {
+      "flattened_name": "Animal",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 7,
+      "raw_name": "Animal"
+    },
+    {
+      "flattened_name": "Cityscape",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 8,
+      "raw_name": "Cityscape"
+    },
+    {
+      "flattened_name": "Human",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 9,
+      "raw_name": "Human"
+    },
+    {
+      "flattened_name": "Indoor scene",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 10,
+      "raw_name": "Indoor scene"
+    },
+    {
+      "flattened_name": "Landscape",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 11,
+      "raw_name": "Landscape"
+    },
+    {
+      "flattened_name": "Night scene",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 12,
+      "raw_name": "Night scene"
+    },
+    {
+      "flattened_name": "Plant",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 13,
+      "raw_name": "Plant"
+    },
+    {
+      "flattened_name": "Still-life",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 14,
+      "raw_name": "Still-life"
+    },
+    {
+      "flattened_name": "Others",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 15,
+      "raw_name": "Others"
+    },
+    {
+      "flattened_name": "Focal length",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 16,
+      "raw_name": "Focal length"
+    },
+    {
+      "flattened_name": "F-number",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 17,
+      "raw_name": "F-number"
+    },
+    {
+      "flattened_name": "Exposure time",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 18,
+      "raw_name": "Exposure time"
+    },
+    {
+      "flattened_name": "ISO",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 19,
+      "raw_name": "ISO"
+    },
+    {
+      "flattened_name": "Brightness.1",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 20,
+      "raw_name": "Brightness"
+    },
+    {
+      "flattened_name": "Flash",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 21,
+      "raw_name": "Flash"
+    },
+    {
+      "flattened_name": "Time0",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 22,
+      "raw_name": "Time"
+    },
+    {
+      "flattened_name": "Time1",
+      "maximum_absolute_difference": 0.0,
+      "mismatch_count": 0,
+      "position": 23,
+      "raw_name": "Unnamed: 8"
+    }
+  ],
+  "flattened_compared_column_count": 24,
+  "flattened_path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_metainfo\\meta_info_SPAQDataset.csv",
+  "flattened_sha256": "17d4eaedeff3c2724b8f6fee9f9dbfef65ac8824bd31b774760d86b53a719e8f",
+  "identifier_mismatches": {
+    "mos_vs_exif": 0,
+    "mos_vs_flattened": 0,
+    "mos_vs_scene": 0
+  },
+  "reconstructed_column_count": 24,
+  "selected_exif_rows": {
+    "00914.jpg": {
+      "Brightness": 0.0,
+      "Exposure time": 0.000775,
+      "F-number": 2.2,
+      "Flash": 0,
+      "Focal length": 3.5,
+      "ISO": 64,
+      "Image name": "00914.jpg",
+      "Time": -0.707107,
+      "Unnamed: 8": -0.707107
+    },
+    "03461.jpg": {
+      "Brightness": 0.0,
+      "Exposure time": 1000000.0,
+      "F-number": 2.0,
+      "Flash": 0,
+      "Focal length": 3.79,
+      "ISO": 400,
+      "Image name": "03461.jpg",
+      "Time": -0.965926,
+      "Unnamed: 8": 0.258819
+    },
+    "05293.jpg": {
+      "Brightness": 1.78,
+      "Exposure time": 0.030303,
+      "F-number": 2.2,
+      "Flash": 0,
+      "Focal length": 4.8,
+      "ISO": 160,
+      "Image name": "05293.jpg",
+      "Time": -1.0,
+      "Unnamed: 8": 0.0
+    }
+  },
+  "total_value_mismatches": 0,
+  "workbooks": {
+    "exif": {
+      "columns": [
+        "Image name",
+        "Focal length",
+        "F-number",
+        "Exposure time",
+        "ISO",
+        "Brightness",
+        "Flash",
+        "Time",
+        "Unnamed: 8"
+      ],
+      "dtypes": [
+        "str",
+        "float64",
+        "float64",
+        "float64",
+        "int64",
+        "float64",
+        "int64",
+        "float64",
+        "float64"
+      ],
+      "null_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected\\SPAQ__Annotations__EXIF_tags.xlsx",
+      "rows": 11125,
+      "sha256": "4ffb751e56453230f4aafc8f24ad9b1e28c70bfc7fc7f56272b504d71d8291e4",
+      "sheet_names": [
+        "Source EXIF tags",
+        "APEX EXIF tags"
+      ],
+      "size": 1252560
+    },
+    "mos_attributes": {
+      "columns": [
+        "Image name",
+        "MOS",
+        "Brightness",
+        "Colorfulness",
+        "Contrast",
+        "Noisiness",
+        "Sharpness"
+      ],
+      "dtypes": [
+        "str",
+        "float64",
+        "float64",
+        "float64",
+        "float64",
+        "float64",
+        "float64"
+      ],
+      "null_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected\\SPAQ__Annotations__MOS and Image attribute scores.xlsx",
+      "rows": 11125,
+      "sha256": "44c8867593e7397f1de79badedca1e8964c8f7e5c01def4fde967c7d11cc8806",
+      "sheet_names": [
+        "Sheet1"
+      ],
+      "size": 575801
+    },
+    "scene": {
+      "columns": [
+        "Image name",
+        "Animal",
+        "Cityscape",
+        "Human",
+        "Indoor scene",
+        "Landscape",
+        "Night scene",
+        "Plant",
+        "Still-life",
+        "Others"
+      ],
+      "dtypes": [
+        "str",
+        "float64",
+        "float64",
+        "float64",
+        "float64",
+        "float64",
+        "float64",
+        "float64",
+        "float64",
+        "float64"
+      ],
+      "null_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\raw\\iqa_pytorch_datasets\\selected\\SPAQ__Annotations__Scene category labels.xlsx",
+      "rows": 11125,
+      "sha256": "1ec32dda553133ab1f758d7b53103bc2b50b6c0e139744e0fabf65af79993311",
+      "sheet_names": [
+        "Sheet1"
+      ],
+      "size": 451797
+    }
+  }
+}

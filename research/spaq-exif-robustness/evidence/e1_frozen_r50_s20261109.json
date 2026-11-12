@@ -1,0 +1,48 @@
+{
+  "completed_utc": "2026-11-08T20:52:10.111645+00:00",
+  "status": "SUCCESS",
+  "experiment": "E1",
+  "track": "RESOURCE_ADAPTED_FROZEN_RESNET50_IMAGENET_V2",
+  "source_commit": "539261783524d6b0b3828247cefad915b8eac41b",
+  "best_epoch": 96,
+  "epochs_completed": 126,
+  "runtime_seconds": 8.247788799999398,
+  "parameter_count": 528913,
+  "metadata_parameter_count": 16,
+  "validation_metrics": {
+    "srcc": 0.8173943259443774,
+    "plcc": 0.8179162798183255,
+    "mae": 9.517771588264555
+  },
+  "test_metrics": {
+    "srcc": 0.8361308210324695,
+    "plcc": 0.8357244395785163,
+    "mae": 9.194229000560686
+  },
+  "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "gpu_peak_allocated_bytes": 147663360,
+  "python": "3.12.10",
+  "torch": "2.14.1+cu130",
+  "artifacts": {
+    "config": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e1_frozen_r50_s20261109\\config.json",
+      "sha256": "9c71c6e7a9bd6265021b145db027f411b45c055508d4fefde226c413e53313d9"
+    },
+    "best_checkpoint": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e1_frozen_r50_s20261109\\best.pt",
+      "sha256": "7085b7765ba6645ee1e186c354576bb342dddde588c2c93ebdfb131f3c4c08ce"
+    },
+    "last_checkpoint": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e1_frozen_r50_s20261109\\last.pt",
+      "sha256": "6cf415a1d59e7e841d0615d18af3b115efea6685b1d88ceaf4ca8571a1ed7925"
+    },
+    "epoch_log": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e1_frozen_r50_s20261109\\epochs.jsonl",
+      "sha256": "51c2afcaed93adf0e5c04498603ce22c8d489a508d24b5d032cc9dafeb0e4a11"
+    },
+    "predictions": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\e1_frozen_r50_s20261109\\predictions.csv",
+      "sha256": "f810e62e947d1614bf46802b89874b4c4b89115a1048a864ad258f173f74e0d8"
+    }
+  }
+}

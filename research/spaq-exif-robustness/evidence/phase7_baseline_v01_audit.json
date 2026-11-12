@@ -1,0 +1,129 @@
+{
+  "completed_utc": "2026-11-09T10:15:58.101197+00:00",
+  "status": "SUCCESS",
+  "baseline_version": "v0.1",
+  "baseline_tag": "baseline-v0.1",
+  "baseline_commit": "3c01b6fcdc77c21b99823f08e4e8214b78837fe2",
+  "protocol": "resource-adapted frozen torchvision ResNet-50 ImageNet1K-V2 feature cache",
+  "not_full_finetuning": true,
+  "manifest_sha256": "abff8b1a5f7d2e74d0c8874655fbe40d5e75de75bf61e65753c7085cee15800d",
+  "feature_cache_sha256": "b639bb6f2365f31004410af1a71a35529a485de849d70e6924f7fbb2dc3975ed",
+  "models": {
+    "E0": {
+      "experiment": "E0",
+      "track": "RESOURCE_ADAPTED_FROZEN_RESNET50_IMAGENET_V2",
+      "test_metrics": {
+        "srcc": 0.8304821038968001,
+        "plcc": 0.8306293862948034,
+        "mae": 9.348914758360792
+      },
+      "validation_metrics": {
+        "srcc": 0.8119338911057409,
+        "plcc": 0.814150991827299,
+        "mae": 9.662627893992097
+      },
+      "parameter_count": 528897,
+      "metadata_parameter_count": 0,
+      "artifact_sha256": {
+        "config": "ef7728f254c6c7cac3b7c0f9807af8cb09e9f14b76d6edabe18b9caae90e3b21",
+        "best_checkpoint": "ce021767cb0245ba1229c708dd19de7fed9b7be4c643c3f01949749df6855600",
+        "last_checkpoint": "0521d797ea09b082f45d19088b0b07fb6c6372d950385032ad148a0d6dad0b01",
+        "epoch_log": "5deaa3e6b10a3c14e02558fd08356b0d54ba84a870f0f038329a7189abd90760",
+        "predictions": "d212e533f552b978be85bc3974a268085e79c77a7dd744d7087f3e8630674982"
+      }
+    },
+    "E1": {
+      "experiment": "E1",
+      "track": "RESOURCE_ADAPTED_FROZEN_RESNET50_IMAGENET_V2",
+      "test_metrics": {
+        "srcc": 0.8361308210324695,
+        "plcc": 0.8357244395785163,
+        "mae": 9.194229000560686
+      },
+      "validation_metrics": {
+        "srcc": 0.8173943259443774,
+        "plcc": 0.8179162798183255,
+        "mae": 9.517771588264555
+      },
+      "parameter_count": 528913,
+      "metadata_parameter_count": 16,
+      "artifact_sha256": {
+        "config": "9c71c6e7a9bd6265021b145db027f411b45c055508d4fefde226c413e53313d9",
+        "best_checkpoint": "7085b7765ba6645ee1e186c354576bb342dddde588c2c93ebdfb131f3c4c08ce",
+        "last_checkpoint": "6cf415a1d59e7e841d0615d18af3b115efea6685b1d88ceaf4ca8571a1ed7925",
+        "epoch_log": "51c2afcaed93adf0e5c04498603ce22c8d489a508d24b5d032cc9dafeb0e4a11",
+        "predictions": "f810e62e947d1614bf46802b89874b4c4b89115a1048a864ad258f173f74e0d8"
+      }
+    },
+    "E2": {
+      "experiment": "E2",
+      "track": "RESOURCE_ADAPTED_FROZEN_RESNET50_IMAGENET_V2",
+      "test_metrics": {
+        "srcc": 0.8360155701095626,
+        "plcc": 0.8377930176619233,
+        "mae": 9.11787618627133
+      },
+      "validation_metrics": {
+        "srcc": 0.8137755684619904,
+        "plcc": 0.8167039559069962,
+        "mae": 9.544262006624017
+      },
+      "parameter_count": 537601,
+      "metadata_parameter_count": 8704,
+      "artifact_sha256": {
+        "config": "ceb63c24d846d2fc37b856a1d911d6a445fb4a478a28691e5f0468a86a68b113",
+        "best_checkpoint": "ec5944791eceee4f572d06fdad72e028ae538551949e9213ef15399ec9f5c35f",
+        "last_checkpoint": "4bf27242e7c52f50b1bf5f120d2f5776f99f9e0ef9e35135745a945aebd1ffc7",
+        "epoch_log": "137c48bc3fcaceead2513204fb20447c1858a98d945e02524428bf0d3c824052",
+        "predictions": "7c3a47ab761d0367b6bb282415df72da9bc708e40685385b00f14274f57dedfc"
+      }
+    },
+    "E3": {
+      "experiment": "E3",
+      "track": "RESOURCE_ADAPTED_FROZEN_RESNET50_IMAGENET_V2",
+      "test_metrics": {
+        "srcc": 0.8344961356106763,
+        "plcc": 0.8345150053075748,
+        "mae": 9.253364533560495
+      },
+      "validation_metrics": {
+        "srcc": 0.8128408993961398,
+        "plcc": 0.8156713744913549,
+        "mae": 9.552308711353236
+      },
+      "parameter_count": 528913,
+      "metadata_parameter_count": 16,
+      "artifact_sha256": {
+        "config": "728529293939c805a630d0cb90c83af2ac16d6ddc2846e97203dd20f3a5fcc9b",
+        "best_checkpoint": "849745092550d38a2948008dad30ecd61ada9be5702a5b809eb122f71c110413",
+        "last_checkpoint": "b71b72877ca4dd323f50e92a1114fca6cf8361b7cb37de3078b657ebda04331c",
+        "epoch_log": "bea5090a35414ff9d0892df52926acd27457d773064b001a028978c280e9f70a",
+        "predictions": "97dab6bd024abbc8c0ca3354505f2d97676544404ddc318e5939d36abb233951"
+      }
+    },
+    "E4": {
+      "experiment": "E4",
+      "track": "RESOURCE_ADAPTED_FROZEN_RESNET50_IMAGENET_V2",
+      "test_metrics": {
+        "srcc": 0.8320830626419514,
+        "plcc": 0.8333659469318984,
+        "mae": 9.326537358268586
+      },
+      "validation_metrics": {
+        "srcc": 0.8074126362882682,
+        "plcc": 0.8109647041916845,
+        "mae": 9.760582275802653
+      },
+      "parameter_count": 537601,
+      "metadata_parameter_count": 8704,
+      "artifact_sha256": {
+        "config": "9ffb4d934177ff3b5f06c550abf34be02c4b05091b7644ad20189631361bab0b",
+        "best_checkpoint": "37856b488995a6cd9e3af3b431290bbf4c095323816a3e847a8dd9694b8c4da4",
+        "last_checkpoint": "87ac568c91093e2a8176eb500910f486a849b5177190b1958278d59dcb36bdc4",
+        "epoch_log": "669257a3c52927b0be3cf82b37de90629262b0258bd79dd0a1af20b23ee1a087",
+        "predictions": "da5c6954863a62ae523da120097c1f652afa218580cec5ce0839e2d49475f714"
+      }
+    }
+  },
+  "branch_at_audit": "phase7-hypothesis-extension"
+}

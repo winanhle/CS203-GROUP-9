@@ -1,0 +1,48 @@
+{
+  "completed_utc": "2026-11-09T10:18:08.338734+00:00",
+  "status": "SUCCESS",
+  "experiment": "E0",
+  "track": "RESOURCE_ADAPTED_FROZEN_RESNET50_IMAGENET_V2",
+  "source_commit": "8855e3ff03dc8449858fc1bd33d736a2f8316ac4",
+  "best_epoch": 96,
+  "epochs_completed": 126,
+  "runtime_seconds": 8.968397500007995,
+  "parameter_count": 528897,
+  "metadata_parameter_count": 0,
+  "validation_metrics": {
+    "srcc": 0.8151975957144921,
+    "plcc": 0.8181953442878296,
+    "mae": 9.517618191767983
+  },
+  "test_metrics": {
+    "srcc": 0.8373909263978352,
+    "plcc": 0.8383840572879446,
+    "mae": 9.128183566154227
+  },
+  "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "gpu_peak_allocated_bytes": 147658240,
+  "python": "3.12.10",
+  "torch": "2.14.1+cu130",
+  "artifacts": {
+    "config": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\phase7_e0_frozen_r50_s20261110\\config.json",
+      "sha256": "a388b8072f0009388b8878790ee311cbb857e47fa083409803f73bae71bae347"
+    },
+    "best_checkpoint": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\phase7_e0_frozen_r50_s20261110\\best.pt",
+      "sha256": "84a14c9cfb6af3af2716879a88a92c245476234b2f27b24dc22a0f6039924b16"
+    },
+    "last_checkpoint": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\phase7_e0_frozen_r50_s20261110\\last.pt",
+      "sha256": "e9e38ff2c14069847ad2b0a370ee67aa35b4dd419d623657595e1c5b1eba7552"
+    },
+    "epoch_log": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\phase7_e0_frozen_r50_s20261110\\epochs.jsonl",
+      "sha256": "6de138c40987fe5875adedec918ebf1979823e80a45511a806c347744d3abd0c"
+    },
+    "predictions": {
+      "path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\runs\\phase7_e0_frozen_r50_s20261110\\predictions.csv",
+      "sha256": "18fbb72d3f8b14c6aa14ae0fd6d52c69958f85ac1aea59d4bf79ed4b201b4a65"
+    }
+  }
+}

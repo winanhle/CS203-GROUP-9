@@ -1,0 +1,39 @@
+# Credentials and local environment
+.env
+.venv/
+.venv*/
+venv/
+**/kaggle.json
+kaggle/kernel/kernel-metadata.json
+kaggle/phase7_backbone/kernel-metadata.json
+kaggle/phase7_cached/kernel-metadata.json
+*.token
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Raw/derived data and large artifacts
+data/raw/
+data/external/
+data/interim/
+data/processed/*.parquet
+artifacts/checkpoints/
+artifacts/features/
+artifacts/kaggle_download/
+artifacts/kaggle_dataset_upload/
+artifacts/kaggle_phase7_assets/
+artifacts/runs/
+*.pt
+*.pth
+*.ckpt
+*.tar
+*.zip
+
+# Keep directory markers and small evidence files
+!.gitkeep
+

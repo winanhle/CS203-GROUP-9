@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_utc": "2026-11-08T20:34:45Z",
+  "dataset": "SPAQ",
+  "official_repository": {
+    "url": "https://github.com/h4nwei/SPAQ",
+    "revision": "03e2b1c752b593079afffc2adb6ffff4c76e376e"
+  },
+  "source_recovery": {
+    "broken_google_drive": "https://drive.google.com/drive/u/1/folders/1wZ6HOHi5h43oxTe2yLYkFxwHPgJ9MwvT",
+    "recovery_issue": "https://github.com/h4nwei/SPAQ/issues/38",
+    "author_recommendation_date": "2026-03-11"
+  },
+  "qalign_archive": {
+    "repository": "q-future/q-align-datasets",
+    "revision": "3da8831b98d683a024b1216720df0cc8a832e376",
+    "url": "https://huggingface.co/datasets/q-future/q-align-datasets/resolve/main/spaq.tar",
+    "bytes": 2626897920,
+    "sha256": "d312242f10af983d5ceaac433c76b7c2b3473e2a2f87782f9db8ee1537dc2194",
+    "image_count": 11125,
+    "annotations_in_archive": false,
+    "embedded_exif_in_archive": false,
+    "role": "downsampled/re-encoded training image variant"
+  },
+  "author_recommended_archive": {
+    "repository": "chaofengc/IQA-PyTorch-Datasets",
+    "revision": "f97c4f5dbdbdea7039bc9b80db808313347b1bef",
+    "url": "https://huggingface.co/datasets/chaofengc/IQA-PyTorch-Datasets/resolve/main/spaq.tgz",
+    "bytes": 34841101349,
+    "sha256": "54e0cb49dc8359f9293e746d452d8b12ec653056c9b12a4f97798a984c7418f7",
+    "uncompressed_file_bytes": 35476869087,
+    "image_count": 11125,
+    "annotation_workbook_count": 3,
+    "full_extraction_performed": false,
+    "kaggle_storage_decision": "Do not extract into the documented 20 GB saved working directory; use the 2.63 GB image variant plus verified workbooks/manifest."
+  },
+  "annotation_files": {
+    "MOS and Image attribute scores.xlsx": "44c8867593e7397f1de79badedca1e8964c8f7e5c01def4fde967c7d11cc8806",
+    "Scene category labels.xlsx": "1ec32dda553133ab1f758d7b53103bc2b50b6c0e139744e0fabf65af79993311",
+    "EXIF_tags.xlsx": "4ffb751e56453230f4aafc8f24ad9b1e28c70bfc7fc7f56272b504d71d8291e4"
+  },
+  "canonical_manifest": {
+    "path": "data/manifest.parquet",
+    "sha256": "abff8b1a5f7d2e74d0c8874655fbe40d5e75de75bf61e65753c7085cee15800d",
+    "rows": 11125,
+    "join_key": "exact case-sensitive image filename",
+    "join_coverage": "11125/11125",
+    "split_seed": 20261109,
+    "split_manifest_sha256": "91a8d1b25ddbd9636734a051c87ae37c4ed85d69be91e222fd3aa60e827ea108"
+  },
+  "exif_provenance": {
+    "source_workbook_sheet": "Source EXIF tags",
+    "model_feature_sheet": "APEX EXIF tags",
+    "embedded_exif_audited_rows": 11125,
+    "scene_brightness_observed_rows": 8546,
+    "scene_brightness_estimated_rows": 2579,
+    "invalid_source_exposure_rows": ["03461.jpg"],
+    "invalid_value_policy": "Never replace with an invented exposure; retain the author APEX shutter value and mark raw source exposure invalid/unobserved."
+  },
+  "license_status": {
+    "mirror_card": "CC-BY-SA-4.0",
+    "official_repository": "No top-level dataset license; demo headers permit education/research use with attribution and restrict commercial-product use without permission.",
+    "redistribution_policy": "Raw images and workbooks remain ignored and are not redistributed. Mirror labels are not treated as relicensing underlying SPAQ photographs."
+  }
+}

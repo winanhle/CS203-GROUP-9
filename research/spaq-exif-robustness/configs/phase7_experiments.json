@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "registered_utc": "2026-11-09T10:10:00Z",
+  "baseline_tag": "baseline-v0.1",
+  "frozen_split_sha256": "91a8d1b25ddbd9636734a051c87ae37c4ed85d69be91e222fd3aa60e827ea108",
+  "manifest_sha256": "abff8b1a5f7d2e74d0c8874655fbe40d5e75de75bf61e65753c7085cee15800d",
+  "feature_cache_sha256": "b639bb6f2365f31004410af1a71a35529a485de849d70e6924f7fbb2dc3975ed",
+  "training_seeds": [20261109, 20261110, 20261111],
+  "primary_metric": "SRCC",
+  "secondary_metrics": ["PLCC", "MAE"],
+  "selection_rule": "validation SRCC only; test predictions emitted once from the selected checkpoint",
+  "hypotheses": {
+    "H1_conditional_utility": {
+      "question": "Is E1-E0 larger in predeclared difficult capture-condition subgroups than on all test images?",
+      "independent_variables": ["EXIF presence", "capture-condition subgroup"],
+      "controls": ["same frozen visual cache", "same split", "same seeds", "same image head and budget"],
+      "subgroups": {
+        "high_iso": "source_iso >= train 90th percentile",
+        "long_exposure": "valid source_exposure_time >= train-valid 90th percentile",
+        "night_scene": "authentic scene_night annotation > 0"
+      },
+      "acceptance": "Report per-seed paired E1-E0 deltas and across-seed mean/range for every subgroup; call support only if the mean subgroup delta exceeds the all-test mean and has the same positive sign in all three seeds. This is conditional association, not causal utility."
+    },
+    "H2_metadata_reliability": {
+      "question": "Does preserving correct image-metadata pairing matter, and which EXIF groups carry the fitted signal?",
+      "independent_variables": ["intact versus permuted EXIF", "available EXIF feature group"],
+      "controls": ["fixed trained checkpoint", "same test IDs", "fixed permutation seeds", "train-fitted scaling"],
+      "permutation_seeds": [7301, 7302, 7303, 7304, 7305],
+      "feature_groups": {
+        "optics": ["focal_length", "aperture"],
+        "exposure": ["shutter_time", "scene_brightness", "sensitivity"],
+        "flash": ["flash"],
+        "time": ["time_sin", "time_cos"]
+      },
+      "acceptance": "Correct-pair utility is supported only if intact EXIF exceeds the mean permuted condition in the same direction across all three seeds. Group ablations are diagnostic and must report sample IDs, metrics, and whether they are inference-only or retrained."
+    },
+    "H3_fusion_complexity": {
+      "question": "Does E2 gated fusion reliably outperform E1 additive fusion across seeds?",
+      "independent_variables": ["additive versus gated fusion"],
+      "controls": ["same cache", "same split", "same seeds", "same optimizer budget", "same validation selector"],
+      "acceptance": "Support gating only if mean E2-E1 test SRCC is positive and E2 exceeds E1 in all three seeds; otherwise retain the simpler additive model."
+    },
+    "H4_backbone_tuning": {
+      "question": "Under one image pipeline, does fine-tuning ResNet-50 layer4 improve over a frozen ResNet-50 backbone?",
+      "independent_variables": ["frozen versus layer4-fine-tuned backbone"],
+      "controls": ["same pretrained weights", "same split", "same crops", "same head", "same seed and validation policy"],
+      "acceptance": "Run a resource-bounded matched Kaggle pair; compare validation first and test once. Report compute and parameter differences. One seed is exploratory until repeated."
+    }
+  },
+  "test_integrity": "No hyperparameter or subgroup threshold may be changed after inspecting Phase 7 test metrics."
+}

@@ -1,0 +1,25 @@
+{
+  "completed_utc": "2026-11-08T20:49:26.814622+00:00",
+  "status": "EXECUTION_VERIFIED",
+  "architecture": "torchvision_resnet50_fc_identity",
+  "weights": "ResNet50_Weights.IMAGENET1K_V2",
+  "preprocessing": "ImageClassification(\n    crop_size=[224]\n    resize_size=[232]\n    mean=[0.485, 0.456, 0.406]\n    std=[0.229, 0.224, 0.225]\n    interpolation=InterpolationMode.BILINEAR\n)",
+  "manifest_sha256": "abff8b1a5f7d2e74d0c8874655fbe40d5e75de75bf61e65753c7085cee15800d",
+  "cache_path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\artifacts\\features\\spaq_resnet50_imagenet_v2_abff8b1a.npz",
+  "cache_sha256": "b639bb6f2365f31004410af1a71a35529a485de849d70e6924f7fbb2dc3975ed",
+  "cache_bytes": 91537022,
+  "shape": [
+    11125,
+    2048
+  ],
+  "dtype": "float32",
+  "sample_300_seconds_including_io": 9.124217399999907,
+  "all_11125_seconds_including_io": 119.76121379999677,
+  "images_per_second": 92.8931800789773,
+  "device": "cuda",
+  "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "gpu_peak_allocated_bytes": 296392192,
+  "python": "3.12.10",
+  "torch": "2.14.1+cu130",
+  "torchvision": "0.29.1+cu130"
+}

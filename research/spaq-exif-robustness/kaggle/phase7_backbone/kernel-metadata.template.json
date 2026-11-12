@@ -1,0 +1,16 @@
+{
+  "id": "longltrnhong/spaq-phase-7-matched-backbone-pair",
+  "title": "SPAQ Phase 7 matched backbone pair",
+  "code_file": "run_backbone_pair.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "dataset_sources": [
+    "longltrnhong/spaq-compact-verified",
+    "longltrnhong/spaq-phase7-pretrained-assets"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}

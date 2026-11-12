@@ -1,0 +1,176 @@
+{
+  "completed_utc": "2026-11-09T04:41:01.499687+00:00",
+  "status": "SUCCESS",
+  "seed": 20261109,
+  "bootstrap_resamples": 10000,
+  "test_rows": 2228,
+  "paired_identifier_check": "PASS",
+  "point_metrics": {
+    "e0": {
+      "srcc": 0.8304821038968001,
+      "plcc": 0.8306293868816877,
+      "mae": 9.348914763913823
+    },
+    "e1": {
+      "srcc": 0.8361308210324695,
+      "plcc": 0.8357244395339607,
+      "mae": 9.194229049955117
+    },
+    "e2": {
+      "srcc": 0.8360155701095626,
+      "plcc": 0.8377930182643973,
+      "mae": 9.117876197755836
+    },
+    "e3": {
+      "srcc": 0.8344961356106763,
+      "plcc": 0.8345150053652027,
+      "mae": 9.253364570242368
+    },
+    "e4": {
+      "srcc": 0.8320830626419514,
+      "plcc": 0.8333659464331885,
+      "mae": 9.326537442908439
+    }
+  },
+  "paired_bootstrap": {
+    "E1-E0": {
+      "srcc": {
+        "candidate": 0.8361308210324695,
+        "control": 0.8304821038968001,
+        "delta": 0.00564871713566939,
+        "ci95_low": 0.0013207695490290773,
+        "ci95_high": 0.010126646800906709
+      },
+      "plcc": {
+        "candidate": 0.8357244395339607,
+        "control": 0.8306293868816877,
+        "delta": 0.005095052652272947,
+        "ci95_low": 0.0008222542244559817,
+        "ci95_high": 0.00947197030208114
+      },
+      "mae": {
+        "candidate": 9.194229049955117,
+        "control": 9.348914763913823,
+        "delta": -0.15468571395870612,
+        "ci95_low": -0.291582945881957,
+        "ci95_high": -0.015052461748206321
+      }
+    },
+    "E3-E1": {
+      "srcc": {
+        "candidate": 0.8344961356106763,
+        "control": 0.8361308210324695,
+        "delta": -0.001634685421793236,
+        "ci95_low": -0.006567375565285164,
+        "ci95_high": 0.003227923914850225
+      },
+      "plcc": {
+        "candidate": 0.8345150053652027,
+        "control": 0.8357244395339607,
+        "delta": -0.0012094341687579613,
+        "ci95_low": -0.005821026028710832,
+        "ci95_high": 0.0034108888283421847
+      },
+      "mae": {
+        "candidate": 9.253364570242368,
+        "control": 9.194229049955117,
+        "delta": 0.059135520287251,
+        "ci95_low": -0.08829024028613,
+        "ci95_high": 0.20586916369726066
+      }
+    },
+    "E2-E1": {
+      "srcc": {
+        "candidate": 0.8360155701095626,
+        "control": 0.8361308210324695,
+        "delta": -0.00011525092290687322,
+        "ci95_low": -0.0051565273045194975,
+        "ci95_high": 0.0048355252486421045
+      },
+      "plcc": {
+        "candidate": 0.8377930182643973,
+        "control": 0.8357244395339607,
+        "delta": 0.002068578730436643,
+        "ci95_low": -0.0028153168912833926,
+        "ci95_high": 0.0069630199385384
+      },
+      "mae": {
+        "candidate": 9.117876197755836,
+        "control": 9.194229049955117,
+        "delta": -0.07635285219928178,
+        "ci95_low": -0.22763788359066622,
+        "ci95_high": 0.07515167282428332
+      }
+    },
+    "E4-E2": {
+      "srcc": {
+        "candidate": 0.8320830626419514,
+        "control": 0.8360155701095626,
+        "delta": -0.0039325074676112015,
+        "ci95_low": -0.008366000410025717,
+        "ci95_high": 0.00040793481857063677
+      },
+      "plcc": {
+        "candidate": 0.8333659464331885,
+        "control": 0.8377930182643973,
+        "delta": -0.004427071831208829,
+        "ci95_low": -0.008501616586654362,
+        "ci95_high": -0.00032466914131058604
+      },
+      "mae": {
+        "candidate": 9.326537442908439,
+        "control": 9.117876197755836,
+        "delta": 0.20866124515260331,
+        "ci95_low": 0.07113126139811442,
+        "ci95_high": 0.34750016586512333
+      }
+    }
+  },
+  "subgroup_definitions": {
+    "high_iso": "source_iso >= train 90th percentile (800)",
+    "long_exposure": "valid source_exposure_time >= train-valid 90th percentile (0.058824 s)",
+    "night_scene": "authentic scene_night annotation > 0",
+    "threshold_policy": "thresholds computed on training partition only"
+  },
+  "subgroup_counts": {
+    "all_test": 2228,
+    "high_iso": 235,
+    "long_exposure": 316,
+    "night_scene": 191
+  },
+  "error_analysis_model": "E1 selected because it had the highest validation SRCC",
+  "top_error_summary": {
+    "count": 20,
+    "overpredictions": 13,
+    "underpredictions": 7,
+    "median_absolute_error": 34.7695095,
+    "maximum_absolute_error": 49.88287,
+    "selection_rule": "20 largest absolute errors on all held-out E1 predictions; deterministic tie-break by image_name",
+    "images_not_redistributed": "Underlying SPAQ image licensing is not explicit enough for report redistribution."
+  },
+  "input_sha256": {
+    "manifest": "abff8b1a5f7d2e74d0c8874655fbe40d5e75de75bf61e65753c7085cee15800d",
+    "e0_predictions": "d212e533f552b978be85bc3974a268085e79c77a7dd744d7087f3e8630674982",
+    "e1_predictions": "f810e62e947d1614bf46802b89874b4c4b89115a1048a864ad258f173f74e0d8",
+    "e2_predictions": "7c3a47ab761d0367b6bb282415df72da9bc708e40685385b00f14274f57dedfc",
+    "e3_predictions": "97dab6bd024abbc8c0ca3354505f2d97676544404ddc318e5939d36abb233951",
+    "e4_predictions": "da5c6954863a62ae523da120097c1f652afa218580cec5ce0839e2d49475f714"
+  },
+  "output_sha256": {
+    "evidence\\paired_bootstrap_s20261109.csv": "26a853d3a7e20e1dc64659787a6bb6b38b3c1a956d8f81df4add1912073d7367",
+    "evidence\\subgroup_metrics_s20261109.csv": "8f448a0f136dabf05ffa8033b3dd589cf5b06bf19c8d0e1065952009056b5059",
+    "evidence\\top_errors_e1_s20261109.csv": "df7e9f760d82654fb11ecbc3acde2c63f9d78aa20fd3ef9ad1ca6121f27b9ffa",
+    "docs\\figures\\exif_availability.png": "c7ccf4b979ae5dae082a8e6416c48a0f9bd55b9eb5801adfa2330be5877580ae",
+    "docs\\figures\\experiment_srcc.png": "8473a82719b6cfc3e69dd4b809190be1e0810f6550c982c654cb070e02d1c5d3",
+    "docs\\figures\\missingness_srcc.png": "56dd9f398d9d530bf693e1f5e68d48cce29513995c63869a8cb48eb1353f8b2d",
+    "docs\\figures\\mos_distribution.png": "08ac3d9ef2ca819327a9375aacceac1e76efbe76b520824b609cf80131173422",
+    "docs\\figures\\paired_bootstrap_cis.png": "249fe7abe628232e1a3cd3a888557f0d6bb21f1252da5066762aa17b8b75e460",
+    "docs\\figures\\subgroup_srcc.png": "bfe699f1ef9b983f84c48b7d7e96945633f1d70ba4dfcf0d46d88d3eb24fa962",
+    "docs\\figures\\training_curves.png": "f559b25dd9e0b4d57233e3d46b5eca273c13fc03e4ab40485b4fa491bb14a01f"
+  },
+  "limitations": [
+    "CIs quantify paired test-image sampling uncertainty, not training-seed uncertainty.",
+    "All learned models use one training seed and a frozen ImageNet feature cache.",
+    "Capture-condition subgroups are descriptive and were not used for model selection."
+  ]
+}

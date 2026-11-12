@@ -1,0 +1,48 @@
+{
+  "apex_feature_null_counts": {
+    "exif_aperture_value": 0,
+    "exif_flash": 0,
+    "exif_focal_length": 0,
+    "exif_scene_brightness_value": 0,
+    "exif_sensitivity_value": 0,
+    "exif_shutter_time_value": 0,
+    "exif_time_cos": 0,
+    "exif_time_sin": 0
+  },
+  "columns": 69,
+  "created_utc": "2026-11-08T20:34:45.537540+00:00",
+  "estimated_scene_brightness_rows": 2579,
+  "group_count": 10340,
+  "input_sha256": {
+    "embedded_audit_csv": "fde4f037f56f0f9bc992b23b7890174f9330f9e0f82bf9f554531782cbfdcbfc",
+    "exif_workbook": "4ffb751e56453230f4aafc8f24ad9b1e28c70bfc7fc7f56272b504d71d8291e4",
+    "mos_attributes_workbook": "44c8867593e7397f1de79badedca1e8964c8f7e5c01def4fde967c7d11cc8806",
+    "scene_workbook": "1ec32dda553133ab1f758d7b53103bc2b50b6c0e139744e0fabf65af79993311",
+    "split_csv": "91a8d1b25ddbd9636734a051c87ae37c4ed85d69be91e222fd3aa60e827ea108"
+  },
+  "invalid_source_exposure_rows": [
+    "03461.jpg"
+  ],
+  "manifest_path": "D:\\HCMUS\\Year2\\Scientific Method\\SC\\spaq-exif-robustness\\data\\manifest.parquet",
+  "manifest_sha256": "abff8b1a5f7d2e74d0c8874655fbe40d5e75de75bf61e65753c7085cee15800d",
+  "mos_range": [
+    2.0,
+    96.0
+  ],
+  "observed_mask_counts": {
+    "mask_aperture_observed": 11115,
+    "mask_flash_observed": 11110,
+    "mask_focal_observed": 11120,
+    "mask_scene_brightness_observed": 8546,
+    "mask_sensitivity_observed": 11108,
+    "mask_shutter_observed": 11108,
+    "mask_time_observed": 11125
+  },
+  "rows": 11125,
+  "split_counts": {
+    "test": 2228,
+    "train": 7786,
+    "val": 1111
+  },
+  "unique_image_names": 11125
+}

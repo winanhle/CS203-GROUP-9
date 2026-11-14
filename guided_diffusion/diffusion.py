@@ -1,20 +1,18 @@
 import os
 import random
 
-import lpips
 import numpy as np
 import torch
 import torch.utils.data as data
 import torchvision.utils as tvu
 import tqdm
+from PIL import Image
+from torchvision.transforms.functional import to_tensor
 
 from datasets import get_dataset, data_transform, inverse_data_transform
 from functions.cm4ir_scheme import cm4ir_restoration
 from functions.median_inpainting import median_inpainting
 from guided_diffusion.script_util import create_model
-
-loss_fn_vgg = lpips.LPIPS(net='vgg')
-
 
 def get_beta_schedule(beta_schedule, *, beta_start, beta_end, num_diffusion_timesteps):
     def sigmoid(x):
@@ -79,12 +77,13 @@ class Diffusion(object):
             raise ValueError(f"Model ckpt not found in: {ckpt}. Please refer to https://github.com/tirer-lab/CM4IR.git"
                              f"to see where the models that were used in the paper can be found.")
 
-        model.load_state_dict(torch.load(ckpt, map_location=self.device))
-        model.to(self.device)
+        model.load_state_dict(torch.load(ckpt, map_location="cpu", weights_only=True))
         if self.config.model.use_fp16:
             model.convert_to_fp16()
+        model.to(self.device)
         model.eval()
-        model = torch.nn.DataParallel(model)
+        if self.device.type == "cuda" and torch.cuda.device_count() > 1:
+            model = torch.nn.DataParallel(model)
 
         print('Running CM4IR.',
               f'Dataset: {self.config.data.dataset}',
@@ -96,7 +95,21 @@ class Diffusion(object):
     def cm4ir_wrapper(self, model, logger):
         args, config = self.args, self.config
 
-        dataset, test_dataset = get_dataset(args, config)
+        observed = getattr(args, "observed", None)
+        if observed:
+            with Image.open(observed) as image:
+                expected = (config.data.image_size,) * 2
+                if image.size != expected:
+                    raise ValueError(f"--observed needs {expected[0]}x{expected[1]} pixels, got {image.size}")
+                test_dataset = [(to_tensor(image.convert("RGB")), 0)]
+            args.subset_start, args.subset_end = 0, 1
+        else:
+            _, test_dataset = get_dataset(args, config)
+
+        loss_fn_vgg = None
+        if not observed and not getattr(args, "skip_lpips", False):
+            import lpips
+            loss_fn_vgg = lpips.LPIPS(net="vgg").eval()
 
         if args.subset_start >= 0 and args.subset_end > 0:
             assert args.subset_end > args.subset_start
@@ -272,9 +285,11 @@ class Diffusion(object):
             x_orig = x_orig.to(self.device)
             x_orig = data_transform(self.config, x_orig)
 
-            y = A_funcs.A(x_orig)
-
-            y = y + args.sigma_y * torch.randn_like(y).cuda()  # added noise to measurement
+            if observed:
+                y = x_orig.flatten(1)
+            else:
+                y = A_funcs.A(x_orig)
+                y = y + args.sigma_y * torch.randn_like(y)
 
             b, hwc = y.size()
             if 'color' in deg:
@@ -301,10 +316,11 @@ class Diffusion(object):
                         inverse_data_transform(config, Apy[i]),
                         os.path.join(self.args.image_folder, f"Apy/Apy_{idx_so_far + i}.png")
                     )
-                    tvu.save_image(
-                        inverse_data_transform(config, x_orig[i]),
-                        os.path.join(self.args.image_folder, f"Apy/orig_{idx_so_far + i}.png")
-                    )
+                    if not observed:
+                        tvu.save_image(
+                            inverse_data_transform(config, x_orig[i]),
+                            os.path.join(self.args.image_folder, f"Apy/orig_{idx_so_far + i}.png")
+                        )
                     if 'inp' in deg or 'cs' in deg:
                         pass
                     else:
@@ -351,28 +367,38 @@ class Diffusion(object):
                     config=config
                 )
 
-            lpips_final = torch.squeeze(loss_fn_vgg(x[0], x_orig.to('cpu'))).detach().numpy()
-            avg_lpips += lpips_final
+            lpips_final = None
+            if loss_fn_vgg is not None:
+                with torch.no_grad():
+                    lpips_final = loss_fn_vgg(x[0], x_orig.cpu()).mean().item()
+                avg_lpips += lpips_final
 
             x = [inverse_data_transform(config, xi) for xi in x]
 
             for j in range(x[0].size(0)):
+                if not torch.isfinite(x[0][j]).all():
+                    raise RuntimeError("CM4IR produced non-finite pixels")
                 tvu.save_image(
                     x[0][j], os.path.join(self.args.image_folder, f"{idx_so_far + j}_{0}.png")
                 )
+                if observed:
+                    continue
                 orig = inverse_data_transform(config, x_orig[j])
                 mse = torch.mean((x[0][j].to(self.device) - orig) ** 2)
                 psnr = 10 * torch.log10(1 / mse)
-                logger.info("img_ind: %d, PSNR: %.2f, LPIPS: %.4f" % (img_ind, psnr, lpips_final))
+                if lpips_final is not None:
+                    logger.info("img_ind: %d, PSNR: %.2f, LPIPS: %.4f", img_ind, psnr, lpips_final)
+                else:
+                    logger.info("img_ind: %d, PSNR: %.2f", img_ind, psnr)
                 avg_psnr += psnr
 
             idx_so_far += y.shape[0]
 
-            logger.info("Avg PSNR: %.2f, Avg LPIPS: %.4f     (** After %d iterations **)" % (
-                avg_psnr / (idx_so_far - idx_init), avg_lpips / (idx_so_far - idx_init), idx_so_far - idx_init))
-
-        avg_psnr = avg_psnr / (idx_so_far - idx_init)
-        avg_lpips = avg_lpips / (idx_so_far - idx_init)
-        print("Total Average PSNR: %.2f" % avg_psnr)
-        print("Total Average LPIPS: %.4f" % avg_lpips)
-        print("Number of samples: %d" % (idx_so_far - idx_init))
+        count = idx_so_far - idx_init
+        if not count:
+            raise RuntimeError("No images processed")
+        if not observed:
+            print("Total Average PSNR: %.2f" % (avg_psnr / count))
+        if loss_fn_vgg is not None:
+            print("Total Average LPIPS: %.4f" % (avg_lpips / count))
+        print("Number of samples: %d" % count)

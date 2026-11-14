@@ -97,12 +97,21 @@ def parse_args_and_config():
         help="Whether to inject deltas in the scaling calculation (1) or not (0)."
     )
 
+    parser.add_argument("--observed", help="Already blurred RGB image matching the model size")
+    parser.add_argument("--workers", type=int, help="Override validation loader workers")
+    parser.add_argument("--skip-lpips", action="store_true", help="Skip the VGG metric")
     args = parser.parse_args()
+    if args.observed and args.deg != "deblur_gauss":
+        parser.error("--observed requires --deg deblur_gauss")
+    if args.workers is not None and args.workers < 0:
+        parser.error("--workers must be nonnegative")
 
     # parse config file
     with open(os.path.join("configs", args.config), "r") as f:
         config = yaml.safe_load(f)
     new_config = dict2namespace(config)
+    if args.workers is not None:
+        new_config.data.num_workers = args.workers
 
     level = getattr(logging, args.verbose.upper(), None)
     if not isinstance(level, int):
@@ -184,6 +193,7 @@ def main():
         runner.sample(logger)
     except Exception:
         logging.error(traceback.format_exc())
+        return 1
 
     return 0
 

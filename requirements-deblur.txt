@@ -1,0 +1,8 @@
+# Install a matching CUDA-enabled torch/torchvision pair first.
+einops==0.8.0
+numpy
+pillow
+PyYAML
+scipy
+tqdm
+lpips==0.1.4

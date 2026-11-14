@@ -6,3 +6,4 @@ PyYAML
 scipy
 tqdm
 lpips==0.1.4
+filelock

@@ -1,5 +1,6 @@
 import os
 import random
+from functools import partial
 
 import numpy as np
 import torch
@@ -13,6 +14,12 @@ from datasets import get_dataset, data_transform, inverse_data_transform
 from functions.cm4ir_scheme import cm4ir_restoration
 from functions.median_inpainting import median_inpainting
 from guided_diffusion.script_util import create_model
+
+
+def seed_worker(worker_id, seed):
+    worker_seed = seed % 2 ** 32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
 
 def get_beta_schedule(beta_schedule, *, beta_start, beta_end, num_diffusion_timesteps):
     def sigmoid(x):
@@ -67,12 +74,12 @@ class Diffusion(object):
         )
         self.betas = torch.from_numpy(betas).float().to(self.device)
 
-    def sample(self, logger):
+    def sample(self, logger, *, checkpoint=None, dataset=None, sample_ids=None, on_result=None):
 
         config_dict = vars(self.config.model)
         config_dict.update({"image_size": self.config.data.image_size})
         model = create_model(**config_dict)
-        ckpt = os.path.join(self.args.exp, f"logs/{self.args.model_ckpt}")
+        ckpt = checkpoint or os.path.join(self.args.exp, f"logs/{self.args.model_ckpt}")
         if not os.path.exists(ckpt):
             raise ValueError(f"Model ckpt not found in: {ckpt}. Please refer to https://github.com/tirer-lab/CM4IR.git"
                              f"to see where the models that were used in the paper can be found.")
@@ -82,7 +89,7 @@ class Diffusion(object):
             model.convert_to_fp16()
         model.to(self.device)
         model.eval()
-        if self.device.type == "cuda" and torch.cuda.device_count() > 1:
+        if sample_ids is None and self.device.type == "cuda" and torch.cuda.device_count() > 1:
             model = torch.nn.DataParallel(model)
 
         print('Running CM4IR.',
@@ -90,9 +97,9 @@ class Diffusion(object):
               f'Task: {self.args.deg}.',
               f'Noise level: {self.args.sigma_y}.'
               )
-        self.cm4ir_wrapper(model, logger)
+        self.cm4ir_wrapper(model, logger, dataset=dataset, sample_ids=sample_ids, on_result=on_result)
 
-    def cm4ir_wrapper(self, model, logger):
+    def cm4ir_wrapper(self, model, logger, *, dataset=None, sample_ids=None, on_result=None):
         args, config = self.args, self.config
 
         observed = getattr(args, "observed", None)
@@ -103,6 +110,8 @@ class Diffusion(object):
                     raise ValueError(f"--observed needs {expected[0]}x{expected[1]} pixels, got {image.size}")
                 test_dataset = [(to_tensor(image.convert("RGB")), 0)]
             args.subset_start, args.subset_end = 0, 1
+        elif dataset is not None:
+            test_dataset = dataset
         else:
             _, test_dataset = get_dataset(args, config)
 
@@ -119,11 +128,10 @@ class Diffusion(object):
             args.subset_end = len(test_dataset)
 
         print(f'Dataset has size {len(test_dataset)}')
-
-        def seed_worker(worker_id):
-            worker_seed = args.seed % 2 ** 32
-            np.random.seed(worker_seed)
-            random.seed(worker_seed)
+        if sample_ids is not None and (
+            config.sampling.batch_size != 1 or len(sample_ids) != len(test_dataset)
+        ):
+            raise ValueError("Sample IDs require batch size 1 and one ID per input")
 
         g = torch.Generator()
         g.manual_seed(args.seed)
@@ -131,7 +139,7 @@ class Diffusion(object):
             test_dataset,
             batch_size=config.sampling.batch_size,
             num_workers=config.data.num_workers,
-            worker_init_fn=seed_worker,
+            worker_init_fn=partial(seed_worker, seed=args.seed),
             generator=g,
         )
 
@@ -266,8 +274,7 @@ class Diffusion(object):
         else:
             raise ValueError("degradation type not supported")
 
-        args.sigma_y = 2 * args.sigma_y  # to account for scaling to [-1,1]
-        sigma_y = args.sigma_y
+        sigma_y = 2 * args.sigma_y  # to account for scaling to [-1,1]
 
         print(f'Start from {args.subset_start}')
         idx_init = args.subset_start
@@ -281,6 +288,10 @@ class Diffusion(object):
         for x_orig, classes in pbar:
 
             img_ind = img_ind + 1
+            output_index = idx_so_far
+            if sample_ids is not None:
+                output_index = sample_ids[img_ind]
+                torch.manual_seed(args.seed + output_index)
 
             x_orig = x_orig.to(self.device)
             x_orig = data_transform(self.config, x_orig)
@@ -289,7 +300,7 @@ class Diffusion(object):
                 y = x_orig.flatten(1)
             else:
                 y = A_funcs.A(x_orig)
-                y = y + args.sigma_y * torch.randn_like(y)
+                y = y + sigma_y * torch.randn_like(y)
 
             b, hwc = y.size()
             if 'color' in deg:
@@ -314,19 +325,19 @@ class Diffusion(object):
                 for i in range(len(Apy)):
                     tvu.save_image(
                         inverse_data_transform(config, Apy[i]),
-                        os.path.join(self.args.image_folder, f"Apy/Apy_{idx_so_far + i}.png")
+                        os.path.join(self.args.image_folder, f"Apy/Apy_{output_index + i}.png")
                     )
                     if not observed:
                         tvu.save_image(
                             inverse_data_transform(config, x_orig[i]),
-                            os.path.join(self.args.image_folder, f"Apy/orig_{idx_so_far + i}.png")
+                            os.path.join(self.args.image_folder, f"Apy/orig_{output_index + i}.png")
                         )
                     if 'inp' in deg or 'cs' in deg:
                         pass
                     else:
                         tvu.save_image(
                             inverse_data_transform(config, y[i].reshape((3, h, w))),
-                            os.path.join(self.args.image_folder, f"Apy/y_{idx_so_far + i}.png")
+                            os.path.join(self.args.image_folder, f"Apy/y_{output_index + i}.png")
                         )
             if 'inp' in args.deg:
                 x = median_inpainting(
@@ -368,6 +379,8 @@ class Diffusion(object):
                 )
 
             lpips_final = None
+            if not torch.isfinite(x[0]).all():
+                raise RuntimeError("CM4IR produced non-finite pixels")
             if loss_fn_vgg is not None:
                 with torch.no_grad():
                     lpips_final = loss_fn_vgg(x[0], x_orig.cpu()).mean().item()
@@ -376,10 +389,9 @@ class Diffusion(object):
             x = [inverse_data_transform(config, xi) for xi in x]
 
             for j in range(x[0].size(0)):
-                if not torch.isfinite(x[0][j]).all():
-                    raise RuntimeError("CM4IR produced non-finite pixels")
+                restored_path = os.path.join(self.args.image_folder, f"{output_index + j}_{0}.png")
                 tvu.save_image(
-                    x[0][j], os.path.join(self.args.image_folder, f"{idx_so_far + j}_{0}.png")
+                    x[0][j], restored_path
                 )
                 if observed:
                     continue
@@ -391,6 +403,11 @@ class Diffusion(object):
                 else:
                     logger.info("img_ind: %d, PSNR: %.2f", img_ind, psnr)
                 avg_psnr += psnr
+                if on_result is not None:
+                    blurred = inverse_data_transform(config, y[j].reshape_as(orig))
+                    blurred_mse = torch.mean((blurred - orig) ** 2)
+                    on_result(output_index + j, restored_path,
+                              float(blurred_mse), float(mse), lpips_final)
 
             idx_so_far += y.shape[0]
 

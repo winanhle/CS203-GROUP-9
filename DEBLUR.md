@@ -22,6 +22,15 @@ curl --fail --location --retry 3 --continue-at - --create-dirs --output exp/logs
 
 On Windows PowerShell, use `curl.exe`.
 
+On the prepared Windows machine, run these commands from this branch's folder to reuse the installed CUDA environment and the locally cached LPIPS assets:
+
+```powershell
+$env:PYTHONPATH=(Resolve-Path 'exp/logs/python-deps').Path
+$env:TORCH_HOME=(Resolve-Path 'exp/logs').Path
+$cm4irPython='../spaq-exif-robustness/.venv312/Scripts/python.exe'
+& $cm4irPython scripts/deblur.py --limit 1 --lpips
+```
+
 ## Run
 
 ```sh
@@ -46,3 +55,7 @@ Outputs are printed by the runner and written to a fresh `exp/image_samples/debl
 | paper | 0.05 | 160 | 0.07 | 1.5 |
 
 Both presets use eta 0.1 and all-zero deltas. `repo` follows the executable commands in `evaluate_CM4IR.sh`. `paper` follows arXiv v2 Table 5. Table 2 reports Bedroom Gaussian deblurring PSNR/VGG-LPIPS of 29.00 dB/0.213 at noise 0.025 and 27.42 dB/0.258 at noise 0.05.
+
+## Local verification
+
+On 2026-11-14 the RTX 4050 Laptop GPU completed both presets at noise 0.025 with seed 1234 and the same eight checked-in Bedroom inputs. Mean PSNR on the saved blurred images was 23.24 dB. The repo preset produced 29.48 dB and VGG-LPIPS 0.2200. The paper preset produced 29.51 dB and VGG-LPIPS 0.2104. A separate run read the first saved blurred PNG through `--observed` and produced a valid 256×256 restored PNG. These measurements cover the eight-image subset and one known-kernel observed input. Checkpoint SHA-256: `61238b8de0ba4976ec35a60fd4786a02a862df0960aa8a2554467e9486e71252`.

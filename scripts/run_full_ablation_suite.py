@@ -153,11 +153,31 @@ def phase_sigma025() -> None:
     ])
 
 
+def phase_table5_57() -> None:
+    manifest = "configs/lsun_cat_57_manifest.json"
+    sigma_y = 0.05
+    seed = 1234
+    results_root = "results/ablation_57_table5"
+    table5_flags = ["--deltas", "0,0,1.0,1.0", "--deltas-injection-type", "1"]
+
+    for mask_short, mask_file in MASKS:
+        for cond_name in ("none", "telea", "spatial"):
+            out_rel = str(Path(results_root) / f"{cond_name}_{mask_short}_s{seed}")
+            run_one(manifest, mask_file, CONDITION_FLAGS[cond_name] + table5_flags, sigma_y, seed, out_rel)
+
+    analysis_mod.main([
+        "--results-root", results_root,
+        "--output-dir", f"{results_root}_analysis",
+        "--n-boot", "10000",
+        "--bootstrap-seed", "42",
+    ])
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--phase",
-        choices=("smoke", "ablation57", "multiseed", "sigma025", "analyze57", "all"),
+        choices=("smoke", "ablation57", "multiseed", "sigma025", "analyze57", "table5_57", "all"),
         default="all",
     )
     args = parser.parse_args()
@@ -170,6 +190,8 @@ def main() -> int:
         phase_multiseed()
     if args.phase in ("sigma025", "all"):
         phase_sigma025()
+    if args.phase == "table5_57":
+        phase_table5_57()
     if args.phase in ("ablation57", "multiseed", "analyze57", "all"):
         analysis_mod.main([
             "--results-root", "results/ablation_57",

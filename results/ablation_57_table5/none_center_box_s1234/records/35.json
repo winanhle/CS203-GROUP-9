@@ -1,0 +1,12 @@
+{
+  "index": 35,
+  "input": "cat/36.png",
+  "sha256": "6cd843eeef9c1b10546ff63ecf887d01114a5deb9a7afd4234fb4a3dce449e55",
+  "restored": "images/35_0.png",
+  "restored_sha256": "9240b9d43662e4a76215eb92f74e0221153307225ea38ab7624f37fac2d8b0d6",
+  "full_psnr_db": 19.889738082885742,
+  "full_vgg_lpips": 0.41108381748199463,
+  "hole_psnr_db": 14.443977355957031,
+  "hole_vgg_lpips": 0.17433297634124756,
+  "observed_max_abs_diff": 0.3527083396911621
+}

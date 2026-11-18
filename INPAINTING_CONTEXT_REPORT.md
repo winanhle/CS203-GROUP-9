@@ -71,3 +71,39 @@ Results are drawn from `results/ablation_57_analysis/stratified_summary.csv` (10
 ## Visual Artifacts & Reproducibility
 
 Figures and analysis scripts are located under `results/ablation_57_analysis/figures/` (`comparison_grid_*.png`, `error_heatmap_*.png`, `delta_ci_forest.png`) and `scripts/` (`run_full_ablation_suite.py`, `run_inpainting_ablation.py`, `analyze_inpainting_results.py`).
+
+
+---
+
+## Paper Table 5 Preset Results (57-Image LSUN Cat, `sigma_y=0.05`, `--deltas "0,0,1.0,1.0" --deltas_injection_type 1`)
+
+To align with the group's Table 5 baseline convention without mixing presets, the Table 5 runs (`seed=1234`, `results/ablation_57_table5/`) are reported separately from the `script/default (deltas=0)` runs above:
+
+### `random_80_mask.npy` (Table 5 preset, `s1234`)
+
+| Mode | Full PSNR (dB) | Full LPIPS | Hole PSNR (dB) | Hole LPIPS |
+|------|----------------|------------|----------------|------------|
+| none (Table 5 baseline) | 25.1843 | 0.4315 | 24.6969 | 0.3634 |
+| telea | 25.2309 | 0.4500 | 24.7301 | 0.3836 |
+| spatial (winner) | **25.3997** | **0.4281** | **24.9408** | **0.3498** |
+
+### `lorem_ipsum_mask.npy` (Table 5 preset, `s1234`)
+
+| Mode | Full PSNR (dB) | Full LPIPS | Hole PSNR (dB) | Hole LPIPS |
+|------|----------------|------------|----------------|------------|
+| none (Table 5 baseline) | 27.5549 | 0.3051 | 26.0695 | 0.0351 |
+| telea (PSNR winner) | **27.6954** | **0.3046** | **26.6396** | 0.0339 |
+| spatial | 27.5696 | 0.3052 | 26.1813 | **0.0312** |
+
+### `center_box_mask.npy` (Table 5 preset, `s1234`)
+
+| Mode | Full PSNR (dB) | Full LPIPS | Hole PSNR (dB) | Hole LPIPS |
+|------|----------------|------------|----------------|------------|
+| none (Table 5 baseline) | 19.4131 | 0.4258 | 13.9870 | 0.1945 |
+| telea (winner) | **19.6620** | 0.4257 | **14.2561** | **0.1921** |
+| spatial | 19.4216 | **0.4254** | 13.9968 | 0.1936 |
+
+### Table 5 Paired Bootstrap 95% CIs (10,000 resamples, `results/ablation_57_table5_analysis/stratified_summary.csv`)
+
+- **spatial on scattered masks (`n=114`):** Delta Full PSNR `+0.1151 dB [0.0916, 0.1411]`, Delta Hole PSNR `+0.1779 dB [0.1514, 0.2086]`, Delta Hole LPIPS `-0.0088 [-0.0106, -0.0072]`.
+- **telea on contiguous `center_box` (`n=57`):** Delta Full PSNR `+0.2488 dB [0.1591, 0.3331]`, Delta Hole PSNR `+0.2691 dB [0.1617, 0.3694]`, Delta Hole LPIPS `-0.0024 [-0.0032, -0.0016]`.

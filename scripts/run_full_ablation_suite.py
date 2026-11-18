@@ -26,15 +26,14 @@ MASKS = [
     ("center_box", "center_box_mask.npy"),
 ]
 
-CONDITIONS = [
-    ("none", ["--context-mode", "none"]),
-    ("telea", ["--context-mode", "telea"]),
-    ("spatial", ["--context-mode", "spatial"]),
-    ("clip", ["--context-mode", "clip"]),
-    ("clip_neg_ctrl", ["--context-mode", "clip", "--clip-negative-control"]),
-]
-
-CONDITION_FLAGS = {name: list(flags) for name, flags in CONDITIONS}
+CONDITION_FLAGS = {
+    "none": ["--context-mode", "none"],
+    "telea": ["--context-mode", "telea"],
+    "spatial": ["--context-mode", "spatial"],
+    "clip": ["--context-mode", "clip"],
+    "clip_neg_ctrl": ["--context-mode", "clip", "--clip-negative-control"],
+}
+CONDITIONS = list(CONDITION_FLAGS.items())
 
 
 def run_one(

@@ -50,9 +50,12 @@ _LPIPS_CPU_MODEL = None
 
 
 def digest(path: Path) -> str:
-    """Compute SHA-256 hex digest for a file."""
+    """Compute SHA-256 hex digest using Python 3.8+-compatible chunked reads."""
+    h = hashlib.sha256()
     with path.open("rb") as stream:
-        return hashlib.file_digest(stream, "sha256").hexdigest()
+        for chunk in iter(lambda: stream.read(8 * 1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def write_json(path: Path, payload: Any) -> None:

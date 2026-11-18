@@ -331,17 +331,11 @@ def steer_clip_null_space(
             rms = (sq_sum / active).sqrt().clamp_min(1e-8)
 
             x0_next = torch.clamp(x0_cur - float(clip_scale) * (g_null / rms), -1.0, 1.0)
-            obs_diff = A_funcs.A(x0_next.reshape(batch_size, -1)) - A_funcs.A(
-                x0_cur.reshape(batch_size, -1)
-            )
-            if obs_diff.abs().max().item() > 1e-7:
-                delta_flat = (x0_next - x0_cur).reshape(batch_size, -1)
-                delta_null = (
-                    delta_flat - A_funcs.A_pinv(A_funcs.A(delta_flat))
-                ).reshape_as(x0_cur)
-                x0_cur = (x0_cur + delta_null).detach()
-            else:
-                x0_cur = x0_next.detach()
+            delta_flat = (x0_next - x0_cur).reshape(batch_size, -1)
+            delta_null = (
+                delta_flat - A_funcs.A_pinv(A_funcs.A(delta_flat))
+            ).reshape_as(x0_cur)
+            x0_cur = (x0_cur + delta_null).detach()
 
     return x0_cur.detach().float()
 

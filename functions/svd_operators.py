@@ -264,7 +264,10 @@ class Inpainting(A_functions):
         self.img_dim = img_dim
         self._singulars = torch.ones(channels * img_dim**2 - missing_indices.shape[0]).to(device)
         self.missing_indices = missing_indices
-        self.kept_indices = torch.Tensor([i for i in range(channels * img_dim**2) if i not in missing_indices]).to(device).long()
+        keep_mask = torch.ones(channels * img_dim**2, dtype=torch.bool, device=device)
+        if missing_indices.numel() > 0:
+            keep_mask[missing_indices.to(device=device, dtype=torch.long)] = False
+        self.kept_indices = torch.nonzero(keep_mask, as_tuple=False).reshape(-1).long()
 
     def V(self, vec):
         temp = vec.clone().reshape(vec.shape[0], -1)

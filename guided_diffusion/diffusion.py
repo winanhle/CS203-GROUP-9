@@ -1,3 +1,4 @@
+from functools import partial
 import os
 import random
 
@@ -10,10 +11,18 @@ import tqdm
 
 from datasets import get_dataset, data_transform, inverse_data_transform
 from functions.cm4ir_scheme import cm4ir_restoration
+from functions.context_guidance import build_context_guidance, telea_inpainting
 from functions.median_inpainting import median_inpainting
 from guided_diffusion.script_util import create_model
 
 loss_fn_vgg = lpips.LPIPS(net='vgg')
+_CACHED_UNET_MODELS = {}
+
+
+def seed_worker(worker_id, seed):
+    worker_seed = seed % 2 ** 32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
 
 
 def get_beta_schedule(beta_schedule, *, beta_start, beta_end, num_diffusion_timesteps):
@@ -68,57 +77,102 @@ class Diffusion(object):
             num_diffusion_timesteps=config.diffusion.num_diffusion_timesteps,
         )
         self.betas = torch.from_numpy(betas).float().to(self.device)
+        self.last_run_records = []
 
-    def sample(self, logger):
+    def sample(self, logger, on_result=None):
 
         config_dict = vars(self.config.model)
         config_dict.update({"image_size": self.config.data.image_size})
-        model = create_model(**config_dict)
         ckpt = os.path.join(self.args.exp, f"logs/{self.args.model_ckpt}")
         if not os.path.exists(ckpt):
             raise ValueError(f"Model ckpt not found in: {ckpt}. Please refer to https://github.com/tirer-lab/CM4IR.git"
                              f"to see where the models that were used in the paper can be found.")
 
-        model.load_state_dict(torch.load(ckpt, map_location=self.device))
-        model.to(self.device)
-        if self.config.model.use_fp16:
-            model.convert_to_fp16()
-        model.eval()
-        model = torch.nn.DataParallel(model)
+        cache_key = (os.path.abspath(ckpt), str(self.device), bool(self.config.model.use_fp16))
+        if getattr(self.args, "cache_model", False) and cache_key in _CACHED_UNET_MODELS:
+            model = _CACHED_UNET_MODELS[cache_key]
+        else:
+            model = create_model(**config_dict)
+            model.load_state_dict(torch.load(ckpt, map_location=self.device))
+            model.to(self.device)
+            if self.config.model.use_fp16:
+                model.convert_to_fp16()
+            model.eval()
+            if getattr(self.args, "cache_model", False):
+                _CACHED_UNET_MODELS[cache_key] = model
+        sample_ids = getattr(self.args, "sample_ids", None)
+        if sample_ids is None and self.device.type == "cuda":
+            model = torch.nn.DataParallel(model)
 
         print('Running CM4IR.',
               f'Dataset: {self.config.data.dataset}',
               f'Task: {self.args.deg}.',
               f'Noise level: {self.args.sigma_y}.'
               )
-        self.cm4ir_wrapper(model, logger)
+        self.cm4ir_wrapper(model, logger, on_result=on_result)
 
-    def cm4ir_wrapper(self, model, logger):
+    def cm4ir_wrapper(self, model, logger, on_result=None):
+        self.last_run_records = []
         args, config = self.args, self.config
+        context_mode = getattr(args, "context_mode", "none")
+        if context_mode not in ("none", "telea", "spatial", "clip"):
+            raise ValueError(f"Unsupported context_mode: {context_mode!r}")
+        if context_mode != "none" and "inp" not in args.deg:
+            raise ValueError(f"context_mode={context_mode!r} is only supported for inpainting tasks, got deg={args.deg!r}")
+
+        sample_ids = getattr(args, "sample_ids", None)
+        if isinstance(sample_ids, str):
+            tokens = [tok.strip() for tok in sample_ids.split(",") if tok.strip()]
+            sample_ids = [int(tok) for tok in tokens]
+        elif sample_ids is not None:
+            sample_ids = [int(x) for x in sample_ids]
 
         dataset, test_dataset = get_dataset(args, config)
 
-        if args.subset_start >= 0 and args.subset_end > 0:
-            assert args.subset_end > args.subset_start
-            test_dataset = torch.utils.data.Subset(test_dataset, range(args.subset_start, args.subset_end))
+        subset_start = getattr(args, "subset_start", -1)
+        subset_end = getattr(args, "subset_end", -1)
+        if sample_ids is not None:
+            if len(sample_ids) == 0:
+                raise ValueError("sample_ids cannot be empty.")
+            if config.sampling.batch_size != 1:
+                raise ValueError(
+                    f"sample_ids requires config.sampling.batch_size == 1, got {config.sampling.batch_size}."
+                )
+            if subset_start >= 0 or subset_end > 0:
+                raise ValueError("sample_ids cannot be combined with subset_start/subset_end.")
+            dataset_len = len(test_dataset)
+            for idx in sample_ids:
+                if idx < 0 or idx >= dataset_len:
+                    raise ValueError(f"sample_id {idx} out of range [0, {dataset_len - 1}].")
+            test_dataset = torch.utils.data.Subset(test_dataset, sample_ids)
+            idx_init = 0
+            idx_so_far = 0
+        elif subset_start >= 0 and subset_end > 0:
+            assert subset_end > subset_start
+            test_dataset = torch.utils.data.Subset(test_dataset, range(subset_start, subset_end))
+            idx_init = subset_start
+            idx_so_far = subset_start
         else:
-            args.subset_start = 0
-            args.subset_end = len(test_dataset)
+            idx_init = 0
+            idx_so_far = 0
 
         print(f'Dataset has size {len(test_dataset)}')
 
-        def seed_worker(worker_id):
-            worker_seed = args.seed % 2 ** 32
-            np.random.seed(worker_seed)
-            random.seed(worker_seed)
+        num_workers = getattr(args, "num_workers", None)
+        if num_workers is None:
+            num_workers = config.data.num_workers
+            if os.name == "nt" and num_workers > 0:
+                if logger is not None:
+                    logger.info("Clamping config.data.num_workers from %d to 0 on Windows.", num_workers)
+                num_workers = 0
 
         g = torch.Generator()
         g.manual_seed(args.seed)
         val_loader = data.DataLoader(
             test_dataset,
             batch_size=config.sampling.batch_size,
-            num_workers=config.data.num_workers,
-            worker_init_fn=seed_worker,
+            num_workers=num_workers,
+            worker_init_fn=partial(seed_worker, seed=args.seed),
             generator=g,
         )
 
@@ -144,7 +198,10 @@ class Diffusion(object):
             A_funcs = CS(config.data.channels, self.config.data.image_size, cs_ratio, self.device)
         elif deg == 'inpainting':
             from functions.svd_operators import Inpainting
-            inpainting_mask_full_path = os.path.join(args.exp, "inpainting_masks", args.inpainting_mask_path)
+            if os.path.isabs(args.inpainting_mask_path) or os.path.exists(args.inpainting_mask_path):
+                inpainting_mask_full_path = args.inpainting_mask_path
+            else:
+                inpainting_mask_full_path = os.path.join(args.exp, "inpainting_masks", args.inpainting_mask_path)
             if not os.path.exists(inpainting_mask_full_path):
                 raise ValueError(f"Could not find inpainting mask in path: {inpainting_mask_full_path}."
                                  f"Please set the correct path using the --inpainting_mask_path flag.")
@@ -253,12 +310,20 @@ class Diffusion(object):
         else:
             raise ValueError("degradation type not supported")
 
-        args.sigma_y = 2 * args.sigma_y  # to account for scaling to [-1,1]
-        sigma_y = args.sigma_y
+        if context_mode in ("spatial", "clip"):
+            context_guidance = build_context_guidance(
+                args=args,
+                mask=mask,
+                image_size=config.data.image_size,
+                device=self.device,
+            )
+        else:
+            context_guidance = None
 
-        print(f'Start from {args.subset_start}')
-        idx_init = args.subset_start
-        idx_so_far = args.subset_start
+        sigma_y = 2 * args.sigma_y  # to account for scaling to [-1,1]
+        os.makedirs(self.args.image_folder, exist_ok=True)
+
+        print(f'Start from {idx_init}')
         avg_psnr = 0.0
         avg_lpips = 0.0
         pbar = tqdm.tqdm(val_loader)
@@ -268,13 +333,21 @@ class Diffusion(object):
         for x_orig, classes in pbar:
 
             img_ind = img_ind + 1
+            output_index = sample_ids[img_ind] if sample_ids is not None else idx_so_far
+            if sample_ids is not None:
+                sample_seed = args.seed + output_index
+                torch.manual_seed(sample_seed)
+                if torch.cuda.is_available():
+                    torch.cuda.manual_seed_all(sample_seed)
+                np.random.seed(sample_seed % (2 ** 32))
+                random.seed(sample_seed)
 
             x_orig = x_orig.to(self.device)
             x_orig = data_transform(self.config, x_orig)
 
             y = A_funcs.A(x_orig)
 
-            y = y + args.sigma_y * torch.randn_like(y).cuda()  # added noise to measurement
+            y = y + sigma_y * torch.randn_like(y)  # added noise to measurement
 
             b, hwc = y.size()
             if 'color' in deg:
@@ -294,35 +367,49 @@ class Diffusion(object):
                                                                            config.data.channels,
                                                                            self.config.data.image_size,
                                                                            self.config.data.image_size)
-            if args.save_observed_img:
+            if getattr(args, "save_observed_img", False):
                 os.makedirs(os.path.join(self.args.image_folder, "Apy"), exist_ok=True)
                 for i in range(len(Apy)):
                     tvu.save_image(
                         inverse_data_transform(config, Apy[i]),
-                        os.path.join(self.args.image_folder, f"Apy/Apy_{idx_so_far + i}.png")
+                        os.path.join(self.args.image_folder, f"Apy/Apy_{output_index + i}.png")
                     )
                     tvu.save_image(
                         inverse_data_transform(config, x_orig[i]),
-                        os.path.join(self.args.image_folder, f"Apy/orig_{idx_so_far + i}.png")
+                        os.path.join(self.args.image_folder, f"Apy/orig_{output_index + i}.png")
                     )
                     if 'inp' in deg or 'cs' in deg:
                         pass
                     else:
                         tvu.save_image(
                             inverse_data_transform(config, y[i].reshape((3, h, w))),
-                            os.path.join(self.args.image_folder, f"Apy/y_{idx_so_far + i}.png")
+                            os.path.join(self.args.image_folder, f"Apy/y_{output_index + i}.png")
                         )
             if 'inp' in args.deg:
-                x = median_inpainting(
-                    Apy,
-                    mask,
-                    self.config.data.channels,
-                    self.config.data.image_size,
-                ).view(
-                    y.shape[0], config.data.channels,
-                    self.config.data.image_size,
-                    self.config.data.image_size,
-                )
+                if context_mode == "telea":
+                    x = telea_inpainting(
+                        Apy,
+                        mask,
+                        self.config.data.channels,
+                        self.config.data.image_size,
+                        method=getattr(args, "telea_method", "telea"),
+                        radius=getattr(args, "telea_radius", 3.0),
+                    ).view(
+                        y.shape[0], config.data.channels,
+                        self.config.data.image_size,
+                        self.config.data.image_size,
+                    )
+                else:
+                    x = median_inpainting(
+                        Apy,
+                        mask,
+                        self.config.data.channels,
+                        self.config.data.image_size,
+                    ).view(
+                        y.shape[0], config.data.channels,
+                        self.config.data.image_size,
+                        self.config.data.image_size,
+                    )
             else:
                 x = Apy.reshape(
                     (
@@ -334,7 +421,7 @@ class Diffusion(object):
                 ).to(device=self.device)
 
             with torch.no_grad():
-                x = cm4ir_restoration(
+                cm4ir_kwargs = dict(
                     x=x,
                     model=model,
                     A_funcs=A_funcs,
@@ -348,31 +435,91 @@ class Diffusion(object):
                     iN=args.iN,
                     zeta=args.zeta,
                     classes=classes if self.config.model.class_cond else None,
-                    config=config
+                    config=config,
                 )
+                if context_guidance is not None:
+                    cm4ir_kwargs["context_guidance"] = context_guidance
+                x = cm4ir_restoration(**cm4ir_kwargs)
 
-            lpips_final = torch.squeeze(loss_fn_vgg(x[0], x_orig.to('cpu'))).detach().numpy()
-            avg_lpips += lpips_final
+            if not torch.isfinite(x[0]).all():
+                raise RuntimeError(f"Non-finite output tensor encountered at output_index={output_index}.")
+
+            x_m11_batch = x[0]
+            with torch.no_grad():
+                lpips_batch = loss_fn_vgg(x_m11_batch, x_orig.to('cpu')).reshape(-1)
 
             x = [inverse_data_transform(config, xi) for xi in x]
 
             for j in range(x[0].size(0)):
-                tvu.save_image(
-                    x[0][j], os.path.join(self.args.image_folder, f"{idx_so_far + j}_{0}.png")
-                )
+                sample_idx = output_index + j
+                restored_path = os.path.join(self.args.image_folder, f"{sample_idx}_{0}.png")
+                tvu.save_image(x[0][j], restored_path)
                 orig = inverse_data_transform(config, x_orig[j])
-                mse = torch.mean((x[0][j].to(self.device) - orig) ** 2)
-                psnr = 10 * torch.log10(1 / mse)
-                logger.info("img_ind: %d, PSNR: %.2f, LPIPS: %.4f" % (img_ind, psnr, lpips_final))
+                x_hat_01_dev = x[0][j].to(self.device)
+                mse = torch.mean((x_hat_01_dev - orig) ** 2)
+                psnr = 10 * torch.log10(1 / mse) if mse > 0 else torch.tensor(float("inf"), device=self.device)
+                full_psnr_db = float(psnr.item()) if mse > 0 else None
+                full_vgg_lpips = float(lpips_batch[j].item())
+                if logger is not None:
+                    logger.info("img_ind: %d, PSNR: %.2f, LPIPS: %.4f" % (img_ind, psnr, full_vgg_lpips))
                 avg_psnr += psnr
+                avg_lpips += full_vgg_lpips
+
+                if 'inp' in deg:
+                    hole_mask_2d = (mask.view(config.data.image_size, config.data.image_size) == 0)
+                    obs_mask_2d = ~hole_mask_2d
+                    if hole_mask_2d.any():
+                        hole_mse = torch.mean(((x_hat_01_dev - orig)[:, hole_mask_2d]) ** 2)
+                        hole_psnr_db = float((10.0 * torch.log10(1.0 / hole_mse)).item()) if hole_mse > 0 else None
+                    else:
+                        hole_psnr_db = None
+
+                    x_orig_m11_cpu = x_orig[j].detach().cpu()
+                    x_hat_m11_cpu = x_m11_batch[j].detach().cpu()
+                    x_hole_only_m11 = x_hat_m11_cpu.clone()
+                    x_hole_only_m11[:, obs_mask_2d.cpu()] = x_orig_m11_cpu[:, obs_mask_2d.cpu()]
+                    with torch.no_grad():
+                        hole_vgg_lpips = float(
+                            loss_fn_vgg(x_hole_only_m11.unsqueeze(0), x_orig_m11_cpu.unsqueeze(0)).item()
+                        )
+                    observed_max_abs_diff = float(
+                        (A_funcs.A(x_hat_m11_cpu.unsqueeze(0).to(self.device)) - y[j:j + 1]).abs().max().item()
+                    )
+                else:
+                    hole_psnr_db = None
+                    hole_vgg_lpips = None
+                    observed_max_abs_diff = None
+
+                rec_entry = {
+                    "index": int(sample_idx),
+                    "x_orig_01": orig.detach().cpu(),
+                    "x_hat_01": x[0][j].detach().cpu(),
+                    "x_orig_m11": x_orig[j].detach().cpu(),
+                    "x_hat_m11": x_m11_batch[j].detach().cpu(),
+                    "y_obs": y[j].detach().cpu(),
+                    "Apy_01": inverse_data_transform(config, Apy[j]).detach().cpu(),
+                    "full_psnr_db": full_psnr_db,
+                    "full_vgg_lpips": full_vgg_lpips,
+                    "hole_psnr_db": hole_psnr_db,
+                    "hole_vgg_lpips": hole_vgg_lpips,
+                    "observed_max_abs_diff": observed_max_abs_diff,
+                    "restored_path": restored_path,
+                }
+                self.last_run_records.append(rec_entry)
+                if on_result is not None:
+                    on_result(int(sample_idx), restored_path, **{k: v for k, v in rec_entry.items() if k not in ("index", "restored_path")})
 
             idx_so_far += y.shape[0]
 
-            logger.info("Avg PSNR: %.2f, Avg LPIPS: %.4f     (** After %d iterations **)" % (
-                avg_psnr / (idx_so_far - idx_init), avg_lpips / (idx_so_far - idx_init), idx_so_far - idx_init))
+            if logger is not None:
+                logger.info("Avg PSNR: %.2f, Avg LPIPS: %.4f     (** After %d iterations **)" % (
+                    avg_psnr / (idx_so_far - idx_init), avg_lpips / (idx_so_far - idx_init), idx_so_far - idx_init))
 
-        avg_psnr = avg_psnr / (idx_so_far - idx_init)
-        avg_lpips = avg_lpips / (idx_so_far - idx_init)
+        count = idx_so_far - idx_init
+        if count == 0:
+            raise RuntimeError("No samples were processed.")
+        avg_psnr = avg_psnr / count
+        avg_lpips = avg_lpips / count
         print("Total Average PSNR: %.2f" % avg_psnr)
         print("Total Average LPIPS: %.4f" % avg_lpips)
-        print("Number of samples: %d" % (idx_so_far - idx_init))
+        print("Number of samples: %d" % count)

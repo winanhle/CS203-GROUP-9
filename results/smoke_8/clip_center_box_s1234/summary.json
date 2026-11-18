@@ -1,0 +1,107 @@
+{
+  "completed": 8,
+  "mean_full_psnr_db": 15.796679615974426,
+  "mean_full_vgg_lpips": 0.5023272968828678,
+  "mean_hole_psnr_db": 10.030801177024841,
+  "mean_hole_vgg_lpips": 0.28086208552122116,
+  "mean_observed_max_abs_diff": 0.3543202206492424,
+  "max_observed_max_abs_diff": 0.4260190725326538,
+  "samples": [
+    {
+      "index": 0,
+      "input": "cat/109.png",
+      "sha256": "d0645224892a167669baa4b15beb0dc08cb7bf37c2ee239dbbbff8d2826a1382",
+      "restored": "images/0_0.png",
+      "restored_sha256": "7e3b5a7e11247df1f3a84193a235d35ad6c16e554ba9385b176af75c9e53eac2",
+      "full_psnr_db": 14.572248458862305,
+      "full_vgg_lpips": 0.5680475234985352,
+      "hole_psnr_db": 8.745652198791504,
+      "hole_vgg_lpips": 0.3049107789993286,
+      "observed_max_abs_diff": 0.3998396396636963
+    },
+    {
+      "index": 1,
+      "input": "cat/133.png",
+      "sha256": "4945fed7a5d761074376f93844282327b51ca203ea4a36d0c78dbcb38c04f356",
+      "restored": "images/1_0.png",
+      "restored_sha256": "75a8eff1768b5345e5d3eaef57839c944857ed6515dd181303d764a9e6ced9f4",
+      "full_psnr_db": 15.628353118896484,
+      "full_vgg_lpips": 0.3199464678764343,
+      "hole_psnr_db": 9.819160461425781,
+      "hole_vgg_lpips": 0.2322971522808075,
+      "observed_max_abs_diff": 0.4260190725326538
+    },
+    {
+      "index": 2,
+      "input": "cat/14.png",
+      "sha256": "faf780b63afc027f2e3f410618a41cc6ee2edc7cf5121566ad555dfe19bd0dbb",
+      "restored": "images/2_0.png",
+      "restored_sha256": "f56e2db00efd5c6a274b0bc3b75cacdd40953aeebe2e1ff9b483dce8797a1a68",
+      "full_psnr_db": 16.804405212402344,
+      "full_vgg_lpips": 0.5745032429695129,
+      "hole_psnr_db": 11.115964889526367,
+      "hole_vgg_lpips": 0.298953115940094,
+      "observed_max_abs_diff": 0.34453845024108887
+    },
+    {
+      "index": 3,
+      "input": "cat/169.png",
+      "sha256": "4d51569c6f7920708180bc6f2204132b5f0a8611b82d9e0ee7142bdcd77d75ce",
+      "restored": "images/3_0.png",
+      "restored_sha256": "1e34ff6bccfdc3d2412b3b5e5bfc7b56b24a7473a4c637b790703833730d03cd",
+      "full_psnr_db": 15.510282516479492,
+      "full_vgg_lpips": 0.5138496160507202,
+      "hole_psnr_db": 9.689785957336426,
+      "hole_vgg_lpips": 0.29351121187210083,
+      "observed_max_abs_diff": 0.40774446725845337
+    },
+    {
+      "index": 4,
+      "input": "cat/240.png",
+      "sha256": "57c32e9e558de37acccab3aaa97b481bd628f0d8e74772edbb98c7512977d615",
+      "restored": "images/4_0.png",
+      "restored_sha256": "ebc59d661d02b58cbfc4b72a1fd497aa5d870453b9d09658ea582a9f20d8e842",
+      "full_psnr_db": 14.904071807861328,
+      "full_vgg_lpips": 0.4601393938064575,
+      "hole_psnr_db": 9.093276977539062,
+      "hole_vgg_lpips": 0.2751420736312866,
+      "observed_max_abs_diff": 0.32172465324401855
+    },
+    {
+      "index": 5,
+      "input": "cat/245.png",
+      "sha256": "99bfa256ba13f9021b2b99c999b300731a29c3b11fc49dc884a6e269f6df0125",
+      "restored": "images/5_0.png",
+      "restored_sha256": "6ac99b65a5af6162188d3b45f95bf7f8fd8d78d2f46d7ad3412e345432ac7bd2",
+      "full_psnr_db": 15.683899879455566,
+      "full_vgg_lpips": 0.5727241039276123,
+      "hole_psnr_db": 9.920735359191895,
+      "hole_vgg_lpips": 0.2879207134246826,
+      "observed_max_abs_diff": 0.31685733795166016
+    },
+    {
+      "index": 6,
+      "input": "cat/86.png",
+      "sha256": "70b7a60c6489ad941257e04a2a30f641d6f8c79319be777ddecf773895d18f92",
+      "restored": "images/6_0.png",
+      "restored_sha256": "e2649937a51046db938eec254db0a0bdfe88bf43c944e3605ca1969f133ea083",
+      "full_psnr_db": 16.83646011352539,
+      "full_vgg_lpips": 0.4596107304096222,
+      "hole_psnr_db": 11.155852317810059,
+      "hole_vgg_lpips": 0.25969892740249634,
+      "observed_max_abs_diff": 0.32750940322875977
+    },
+    {
+      "index": 7,
+      "input": "cat/92.png",
+      "sha256": "a9f675f822656a22d894da6042deaeffb018d2451fb0cb826530f5be1121931f",
+      "restored": "images/7_0.png",
+      "restored_sha256": "0bdbeba431d34658b6188ccd239faf4e4355c3e5fa541f3efae593d0d5501afe",
+      "full_psnr_db": 16.4337158203125,
+      "full_vgg_lpips": 0.5497972965240479,
+      "hole_psnr_db": 10.705981254577637,
+      "hole_vgg_lpips": 0.2944627106189728,
+      "observed_max_abs_diff": 0.2903287410736084
+    }
+  ]
+}

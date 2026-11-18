@@ -13,7 +13,7 @@ from guided_diffusion.diffusion import Diffusion
 torch.set_printoptions(sci_mode=False)
 
 
-def parse_args_and_config():
+def build_parser():
     parser = argparse.ArgumentParser(description=globals()["__doc__"])
 
     parser.add_argument(
@@ -96,13 +96,153 @@ def parse_args_and_config():
         "--deltas_injection_type", type=int, default=0,
         help="Whether to inject deltas in the scaling calculation (1) or not (0)."
     )
+    parser.add_argument(
+        "--context_mode",
+        type=str,
+        choices=["none", "telea", "spatial", "clip"],
+        default="none",
+        help="Context-aware inpainting guidance mode.",
+    )
+    parser.add_argument(
+        "--telea_method",
+        type=str,
+        choices=["telea", "ns"],
+        default="telea",
+        help="OpenCV inpainting method for --context_mode telea.",
+    )
+    parser.add_argument(
+        "--telea_radius",
+        type=float,
+        default=3.0,
+        help="Inpainting neighborhood radius for --context_mode telea.",
+    )
+    parser.add_argument(
+        "--spatial_sigma",
+        type=float,
+        default=8.0,
+        help="Gaussian border feathering scale for --context_mode spatial.",
+    )
+    parser.add_argument(
+        "--eta_hole",
+        type=float,
+        default=0.25,
+        help="Stochasticity inside missing hole (mask == 0) for --context_mode spatial.",
+    )
+    parser.add_argument(
+        "--eta_obs",
+        type=float,
+        default=0.02,
+        help="Stochasticity on observed pixels (mask != 0) for --context_mode spatial.",
+    )
+    parser.add_argument(
+        "--clip_model",
+        type=str,
+        default="ViT-B-32",
+        help="OpenCLIP model architecture for --context_mode clip.",
+    )
+    parser.add_argument(
+        "--clip_pretrained",
+        type=str,
+        default="laion2b_s34b_b79k",
+        help="OpenCLIP pretrained tag for --context_mode clip.",
+    )
+    parser.add_argument(
+        "--clip_prompt",
+        type=str,
+        default="a photograph of a cat",
+        help="Target text prompt for --context_mode clip.",
+    )
+    parser.add_argument(
+        "--clip_neg_prompt",
+        type=str,
+        default="a photograph of a red fire hydrant in outer space",
+        help="Negative-control text prompt when --clip_negative_control is set.",
+    )
+    parser.add_argument(
+        "--clip_negative_control",
+        action="store_true",
+        default=False,
+        help="Use --clip_neg_prompt instead of --clip_prompt as a negative control.",
+    )
+    parser.add_argument(
+        "--clip_scale",
+        type=float,
+        default=0.25,
+        help="Null-space steering step scale for --context_mode clip.",
+    )
+    parser.add_argument(
+        "--clip_steps",
+        type=int,
+        default=1,
+        help="Number of null-space CLIP steering steps per diffusion iteration.",
+    )
+    parser.add_argument(
+        "--sample_ids",
+        nargs="+",
+        type=str,
+        default=None,
+        help="Optional 0-based sample indices (comma-separated or space-separated).",
+    )
+    parser.add_argument(
+        "--num_workers",
+        type=int,
+        default=None,
+        help="Override config.data.num_workers for DataLoader.",
+    )
+    return parser
 
-    args = parser.parse_args()
+
+def parse_cli_args(argv=None):
+    parser = build_parser()
+    args = parser.parse_args(argv)
+
+    if args.telea_radius <= 0:
+        parser.error("--telea_radius must be > 0")
+    if args.spatial_sigma <= 0:
+        parser.error("--spatial_sigma must be > 0")
+    if not (0.0 <= args.eta_hole <= 1.0):
+        parser.error("--eta_hole must be in [0, 1]")
+    if not (0.0 <= args.eta_obs <= 1.0):
+        parser.error("--eta_obs must be in [0, 1]")
+    if args.clip_scale < 0:
+        parser.error("--clip_scale must be >= 0")
+    if args.clip_steps < 0:
+        parser.error("--clip_steps must be >= 0")
+    if args.num_workers is not None and args.num_workers < 0:
+        parser.error("--num_workers must be >= 0")
+
+    if args.sample_ids is not None:
+        parsed_ids = []
+        for item in args.sample_ids:
+            for part in item.split(","):
+                tok = part.strip()
+                if not tok:
+                    parser.error("--sample_ids cannot contain empty entries")
+                try:
+                    val = int(tok)
+                except ValueError:
+                    parser.error(f"Invalid integer in --sample_ids: {tok!r}")
+                if val < 0:
+                    parser.error("--sample_ids entries must be >= 0")
+                parsed_ids.append(val)
+        if not parsed_ids:
+            parser.error("--sample_ids cannot be empty")
+        if args.subset_start >= 0 or args.subset_end > 0:
+            parser.error("--sample_ids cannot be combined with --subset_start/--subset_end")
+        args.sample_ids = parsed_ids
+
+    return args
+
+
+def parse_args_and_config():
+    args = parse_cli_args()
 
     # parse config file
     with open(os.path.join("configs", args.config), "r") as f:
         config = yaml.safe_load(f)
     new_config = dict2namespace(config)
+    if args.num_workers is not None:
+        new_config.data.num_workers = args.num_workers
 
     level = getattr(logging, args.verbose.upper(), None)
     if not isinstance(level, int):
@@ -184,6 +324,7 @@ def main():
         runner.sample(logger)
     except Exception:
         logging.error(traceback.format_exc())
+        return 1
 
     return 0
 

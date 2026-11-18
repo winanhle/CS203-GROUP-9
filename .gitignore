@@ -8,3 +8,6 @@ __pycache__/
 *.pt
 *.pth
 *.ckpt
+.pytest_cache/
+results/**/images/
+results/**/.run.lock

@@ -1,0 +1,67 @@
+{
+  "git_commit": "3d09c114aa3ea2bfb1eb1b4c926fc31caf01cc5d",
+  "config_sha256": "6df04278a5a4a10089964c0ce236a905c0b5154276e4e9a4f4914d558792c60c",
+  "checkpoint_sha256": "e56343f9fce32260396578734e480c2752a45c517920e8a4f20cf7f79ea9333f",
+  "mask_path": "exp/inpainting_masks/lorem_ipsum_mask.npy",
+  "mask_sha256": "61e488d53e19effd28f8707dac69178b261159e2e8d55aa5d61b7f64f2e99f3d",
+  "context_mode": "telea",
+  "sigma_y": 0.025,
+  "iN": 150,
+  "gamma": 0.2,
+  "zeta": 0.0,
+  "eta": 0.1,
+  "deltas": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "deltas_injection_type": 0,
+  "seed": 1234,
+  "seed_rule": "seed + sorted zero-based sample index",
+  "context_params": {
+    "telea_method": "telea",
+    "telea_radius": 3.0
+  },
+  "runtime": {
+    "python": "3.12.16",
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU"
+  },
+  "inputs": [
+    {
+      "input": "cat/109.png",
+      "sha256": "d0645224892a167669baa4b15beb0dc08cb7bf37c2ee239dbbbff8d2826a1382"
+    },
+    {
+      "input": "cat/133.png",
+      "sha256": "4945fed7a5d761074376f93844282327b51ca203ea4a36d0c78dbcb38c04f356"
+    },
+    {
+      "input": "cat/14.png",
+      "sha256": "faf780b63afc027f2e3f410618a41cc6ee2edc7cf5121566ad555dfe19bd0dbb"
+    },
+    {
+      "input": "cat/169.png",
+      "sha256": "4d51569c6f7920708180bc6f2204132b5f0a8611b82d9e0ee7142bdcd77d75ce"
+    },
+    {
+      "input": "cat/240.png",
+      "sha256": "57c32e9e558de37acccab3aaa97b481bd628f0d8e74772edbb98c7512977d615"
+    },
+    {
+      "input": "cat/245.png",
+      "sha256": "99bfa256ba13f9021b2b99c999b300731a29c3b11fc49dc884a6e269f6df0125"
+    },
+    {
+      "input": "cat/86.png",
+      "sha256": "70b7a60c6489ad941257e04a2a30f641d6f8c79319be777ddecf773895d18f92"
+    },
+    {
+      "input": "cat/92.png",
+      "sha256": "a9f675f822656a22d894da6042deaeffb018d2451fb0cb826530f5be1121931f"
+    }
+  ]
+}

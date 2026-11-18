@@ -2,6 +2,8 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
+from functions.context_guidance import feather_bp_guidance, steer_clip_null_space
+
 class_num = 951
 
 
@@ -57,7 +59,16 @@ def cm4ir_restoration(
         mu_factor=1,
         sigma_t_min=0.002,
         sigma_t_max=80.0,
+        context_guidance=None,
 ):
+    guidance_mode = "none" if context_guidance is None else context_guidance.get("mode", "none")
+    if guidance_mode == "spatial":
+        spatial_weight_map = context_guidance["weight_map"].to(device=x.device, dtype=x.dtype)
+        spatial_eta_map = context_guidance["eta_map"].to(device=x.device, dtype=x.dtype)
+    else:
+        spatial_weight_map = None
+        spatial_eta_map = None
+
     with torch.no_grad():
         iter_ind = -1
         t = (torch.ones(1) * (iN + 1)).to(x.device)
@@ -96,6 +107,18 @@ def cm4ir_restoration(
             x0_t = c_out * et + c_skip * xt
             x0_t = torch.clamp(x0_t, -1.0, 1.0)
 
+            if guidance_mode == "clip":
+                x0_t = steer_clip_null_space(
+                    x0_t=x0_t,
+                    A_funcs=A_funcs,
+                    prompt=context_guidance["prompt"],
+                    clip_model=context_guidance.get("clip_model", "ViT-B-32"),
+                    clip_pretrained=context_guidance.get("clip_pretrained", "laion2b_s34b_b79k"),
+                    clip_scale=context_guidance.get("clip_scale", 0.25),
+                    clip_steps=context_guidance.get("clip_steps", 1),
+                    text_feat=context_guidance.get("text_feat"),
+                )
+
             z_hat_minus = (x0_t - xt) / sigma_t
             if sigma_y != 0 and at_next == -1:  # last iteration of noisy case, skip guidance
                 break
@@ -103,14 +126,26 @@ def cm4ir_restoration(
             BP_guidance = A_funcs.A_pinv_add_eta(
                 A_funcs.A(x0_t.reshape(x0_t.size(0), -1)) - y_0.reshape(y_0.size(0), -1), eta=bp_eta_reg).reshape(
                 *x.size())
+            if guidance_mode == "spatial":
+                BP_guidance = feather_bp_guidance(
+                    BP_guidance,
+                    mask=context_guidance["mask"],
+                    image_size=context_guidance["image_size"],
+                    spatial_sigma=context_guidance["spatial_sigma"],
+                    weight_map=spatial_weight_map,
+                )
             xt = x0_t - (mu * mu_factor ** iter_ind) * BP_guidance
 
             if at_next != -1:
                 next_sigma_t = torch.sqrt(1 - at_next)
                 next_sigma_t = torch.clamp(next_sigma_t, sigma_t_min, sigma_t_max)
 
-                c1 = next_sigma_t * eta
-                c2 = next_sigma_t * ((1 - eta ** 2) ** 0.5)
+                if guidance_mode == "spatial":
+                    c1 = next_sigma_t * spatial_eta_map
+                    c2 = next_sigma_t * torch.sqrt(torch.clamp(1.0 - spatial_eta_map ** 2, min=0.0))
+                else:
+                    c1 = next_sigma_t * eta
+                    c2 = next_sigma_t * ((1 - eta ** 2) ** 0.5)
                 xt = xt + c1 * torch.randn_like(xt) + c2 * z_hat_minus
 
         if sigma_y != 0:

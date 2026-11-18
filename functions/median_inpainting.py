@@ -7,8 +7,8 @@ import torch
 
 def median_inpainting(y, mask, in_channels, image_size):
     device = y.device
-    y = y.squeeze(0)
-    mask = mask.view(1, image_size, image_size).expand(in_channels, -1, -1).to(device)
+    y = y.squeeze(0).cpu()
+    mask = mask.view(1, image_size, image_size).expand(in_channels, -1, -1).cpu()
 
     y0 = y.clone().float()
     y0[mask == 0] = float('nan')
@@ -34,4 +34,4 @@ def median_inpainting(y, mask, in_channels, image_size):
 
         bitmap_NaN = torch.isnan(y0[0])
 
-    return y0.view(1, -1)
+    return y0.view(1, -1).to(device)

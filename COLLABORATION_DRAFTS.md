@@ -22,10 +22,10 @@ To keep our runs comparable across the group, I propose we standardize on the fo
 
 This matches the pattern Long has been using (manifest.json + records/*.json + results.csv + summary.json).
 
-Before I lock the baseline config, can we align on the inpainting delta settings for Table 5? Specifically:
+Before I lock the group comparison table, can we align on the baseline `--deltas` settings from Table 5 of the CM4IR paper (Appendix B.1)? Specifically:
 
-- Should the group baseline use Table 5's --deltas '0.1,0.1,0,0' for Cat SRx4?
-- Or should we use deltas=0 as in scripts/run_lsun_cat_sr4.py?
+- For Cat SRx4 (`sigma_y=0.05`), should the group baseline use Table 5's `--deltas '0.1,0.1,0,0'` or `deltas=0` as in `scripts/run_lsun_cat_sr4.py`?
+- For LSUN Cat Inpainting (`sigma_y=0.05`), my runs on `codex/phuc-context` used `deltas=0` (matching `evaluate_CM4IR.sh`'s uncommented default) rather than Table 5's `0,0,1.0,1.0` (`--deltas_injection_type 1`).
 
 On my branch codex/phuc-context, I have frozen configs/lsun_cat_57_manifest.json — 57 unique 256x256 LSUN Cat PNGs, SHA-256 locked — so we have a common, verifiable image set to compare against.
 

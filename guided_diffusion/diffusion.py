@@ -135,10 +135,6 @@ class Diffusion(object):
         if sample_ids is not None:
             if len(sample_ids) == 0:
                 raise ValueError("sample_ids cannot be empty.")
-            if config.sampling.batch_size != 1:
-                raise ValueError(
-                    f"sample_ids requires config.sampling.batch_size == 1, got {config.sampling.batch_size}."
-                )
             if subset_start >= 0 or subset_end > 0:
                 raise ValueError("sample_ids cannot be combined with subset_start/subset_end.")
             dataset_len = len(test_dataset)
@@ -333,22 +329,32 @@ class Diffusion(object):
 
         for x_orig, classes in pbar:
 
-            img_ind = img_ind + 1
-            output_index = sample_ids[img_ind] if sample_ids is not None else idx_so_far
-            if sample_ids is not None:
-                sample_seed = args.seed + output_index
-                torch.manual_seed(sample_seed)
-                if torch.cuda.is_available():
-                    torch.cuda.manual_seed_all(sample_seed)
-                np.random.seed(sample_seed % (2 ** 32))
-                random.seed(sample_seed)
+            b_cur = x_orig.shape[0]
+            batch_indices = [
+                sample_ids[idx_so_far - idx_init + i] if sample_ids is not None else idx_so_far + i
+                for i in range(b_cur)
+            ]
+            output_index = batch_indices[0]
+            sample_seeds = [args.seed + idx for idx in batch_indices]
 
             x_orig = x_orig.to(self.device)
             x_orig = data_transform(self.config, x_orig)
 
             y = A_funcs.A(x_orig)
 
-            y = y + sigma_y * torch.randn_like(y)  # added noise to measurement
+            y_noise = torch.cat(
+                [
+                    torch.randn(
+                        y[i : i + 1].shape,
+                        device=y.device,
+                        dtype=y.dtype,
+                        generator=torch.Generator(device=y.device).manual_seed(sample_seeds[i]),
+                    )
+                    for i in range(b_cur)
+                ],
+                dim=0,
+            )
+            y = y + sigma_y * y_noise  # added noise to measurement
 
             b, hwc = y.size()
             if 'color' in deg:
@@ -411,7 +417,7 @@ class Diffusion(object):
                         self.config.data.image_size,
                         self.config.data.image_size,
                     )
-                elif context_mode in ("poisson_bridge", "poisson_bridge_sharp"):
+                elif context_mode in ("poisson_bridge", "poisson_bridge_sharp", "poisson_bridge_freq", "poisson_bridge_feather"):
                     x = saliency_bridge_inpainting(
                         Apy,
                         mask,
@@ -460,6 +466,7 @@ class Diffusion(object):
                     zeta=args.zeta,
                     classes=classes if self.config.model.class_cond else None,
                     config=config,
+                    sample_seeds=sample_seeds,
                 )
                 if context_guidance is not None:
                     cm4ir_kwargs["context_guidance"] = context_guidance

@@ -41,6 +41,23 @@ def compute_alpha(beta, t):
     return a
 
 
+def _randn_like_per_sample(tensor, sample_seeds=None, offset=0):
+    if not sample_seeds:
+        return torch.randn_like(tensor)
+    return torch.cat(
+        [
+            torch.randn(
+                tensor[i : i + 1].shape,
+                device=tensor.device,
+                dtype=tensor.dtype,
+                generator=torch.Generator(device=tensor.device).manual_seed(int(s) + offset),
+            )
+            for i, s in enumerate(sample_seeds)
+        ],
+        dim=0,
+    )
+
+
 def cm4ir_restoration(
         x,
         model,
@@ -58,12 +75,13 @@ def cm4ir_restoration(
         config,
         mu=1,
         mu_factor=1,
+        sample_seeds=None,
         sigma_t_min=0.002,
         sigma_t_max=80.0,
         context_guidance=None,
 ):
     guidance_mode = "none" if context_guidance is None else context_guidance.get("mode", "none")
-    _POISSON_MODES = ("poisson", "poisson_bridge", "poisson_bridge_sharp")
+    _POISSON_MODES = ("poisson", "poisson_bridge", "poisson_bridge_sharp", "poisson_bridge_freq", "poisson_bridge_feather")
     if guidance_mode == "spatial":
         spatial_weight_map = context_guidance["weight_map"].to(device=x.device, dtype=x.dtype)
         spatial_eta_map = context_guidance["eta_map"].to(device=x.device, dtype=x.dtype)
@@ -109,7 +127,7 @@ def cm4ir_restoration(
         else:
             sigma_schedule = None
             sigma_t = torch.sqrt(1 - alphas[0])
-        xt = x + torch.randn_like(x) * sigma_t
+        xt = x + _randn_like_per_sample(x, sample_seeds, offset=1) * sigma_t
 
         alphas_next = alphas[1:] + [-1]
         bp_eta_reg = sigma_y ** 2 * zeta
@@ -139,7 +157,7 @@ def cm4ir_restoration(
             if classes is None:
                 et = model(c_in * xt, rescaled_sigma_t)
             else:
-                et = model(c_in * xt, rescaled_sigma_t, classes)
+                et = model(c_in * xt, rescaled_sigma_t, classes.to(xt.device))
             x0_t = c_out * et + c_skip * xt
             x0_t = torch.clamp(x0_t, -1.0, 1.0)
 
@@ -168,6 +186,14 @@ def cm4ir_restoration(
                     mask=context_guidance["mask"],
                     image_size=context_guidance["image_size"],
                     spatial_sigma=context_guidance["spatial_sigma"],
+                    weight_map=spatial_weight_map,
+                )
+            elif guidance_mode == "poisson_bridge_feather":
+                BP_guidance = feather_bp_guidance(
+                    BP_guidance,
+                    mask=context_guidance["mask"],
+                    image_size=context_guidance["image_size"],
+                    spatial_sigma=6.0,
                     weight_map=spatial_weight_map,
                 )
             elif guidance_mode in _POISSON_MODES:
@@ -202,7 +228,7 @@ def cm4ir_restoration(
                 else:
                     c1 = next_sigma_t * eta
                     c2 = next_sigma_t * ((1 - eta ** 2) ** 0.5)
-                xt = xt + c1 * torch.randn_like(xt) + c2 * z_hat_minus
+                xt = xt + c1 * _randn_like_per_sample(xt, sample_seeds, offset=2 + iter_ind) + c2 * z_hat_minus
 
         if sigma_y != 0:
             return [x0_t.to('cpu')]

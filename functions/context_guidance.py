@@ -410,7 +410,7 @@ def build_context_guidance(
             "negative_control": clip_negative_control,
         }
 
-    if context_mode in ("poisson", "poisson_bridge", "poisson_bridge_sharp"):
+    if context_mode in ("poisson", "poisson_bridge", "poisson_bridge_sharp", "poisson_bridge_freq", "poisson_bridge_feather"):
         from functions.harmonic_poisson import get_harmonic_solver
 
         solver = get_harmonic_solver(mask, image_size)
@@ -423,21 +423,29 @@ def build_context_guidance(
             bridge_alphas = None
             bridge_blur_sigma = 12.0
         else:
-            eta_hole = 1.0 if (is_contiguous and context_mode == "poisson_bridge_sharp") else (
+            eta_hole = 1.0 if (is_contiguous and context_mode in ("poisson_bridge_sharp", "poisson_bridge_freq", "poisson_bridge_feather")) else (
                 0.95 if is_contiguous else float(getattr(args, "eta_hole", 0.25))
             )
             edm_sigmas = (3.5, 1.6, 0.55, 0.08) if is_contiguous else None
             if is_contiguous:
-                eta_holes_seq = (1.0, 1.0, 1.0) if context_mode == "poisson_bridge_sharp" else (0.95, 1.0, 1.0)
+                eta_holes_seq = (
+                    (1.0, 1.0, 1.0)
+                    if context_mode in ("poisson_bridge_sharp", "poisson_bridge_freq", "poisson_bridge_feather")
+                    else (0.95, 1.0, 1.0)
+                )
                 eta_maps = [
                     compute_eta_map(mask, image_size, eta_hole=eh, eta_obs=eta_obs, device=device)
                     for eh in eta_holes_seq
                 ]
-                bridge_alphas = (0.40, 0.18, 0.0, 0.0)
+                bridge_alphas = (
+                    (0.50, 0.22, 0.0, 0.0)
+                    if context_mode in ("poisson_bridge_freq", "poisson_bridge_feather")
+                    else (0.40, 0.18, 0.0, 0.0)
+                )
             else:
                 eta_maps = None
                 bridge_alphas = None
-            bridge_blur_sigma = 12.0
+            bridge_blur_sigma = 10.0 if context_mode in ("poisson_bridge_freq", "poisson_bridge_feather") else 12.0
 
         eta_map = compute_eta_map(
             mask, image_size, eta_hole=eta_hole, eta_obs=eta_obs, device=device

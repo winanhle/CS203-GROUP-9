@@ -751,6 +751,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             write_json(records_dir / f"{manifest_idx}.json", row)
             rows[manifest_idx] = row
 
+        config.sampling.batch_size = max(1, int(getattr(args, "batch_size", 1)))
         init_params = inspect.signature(diffusion_cls.__init__).parameters
         if len(init_params) >= 4 or "device" in init_params or any(
             p.kind == inspect.Parameter.VAR_POSITIONAL for p in init_params.values()
@@ -891,6 +892,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--exp", type=Path, default=ROOT / "exp")
     parser.add_argument("--seed", type=int, default=1234)
     parser.add_argument("--workers", type=int, default=0)
+    parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--device", choices=("auto", "cuda", "cpu"), default="auto")
     parser.add_argument("--skip-lpips", action="store_true", help="Skip VGG-LPIPS evaluation (stores null)")
     parser.add_argument("--sigma-y", type=float, default=0.05)
@@ -900,7 +902,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--eta", type=float, default=0.1)
     parser.add_argument("--deltas", type=str, default="")
     parser.add_argument("--deltas-injection-type", type=int, default=0)
-    parser.add_argument("--context-mode", choices=("none", "telea", "spatial", "clip", "poisson", "poisson_bridge", "poisson_bridge_sharp"), default="none")
+    parser.add_argument("--context-mode", choices=("none", "telea", "spatial", "clip", "poisson", "poisson_bridge", "poisson_bridge_sharp", "poisson_bridge_freq", "poisson_bridge_feather"), default="none")
     parser.add_argument("--telea-method", choices=("telea", "ns"), default="telea")
     parser.add_argument("--telea-radius", type=float, default=3.0)
     parser.add_argument("--spatial-sigma", type=float, default=8.0)

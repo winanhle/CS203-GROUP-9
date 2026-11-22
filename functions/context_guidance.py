@@ -410,27 +410,54 @@ def build_context_guidance(
             "negative_control": clip_negative_control,
         }
 
-    if context_mode == "poisson":
+    if context_mode in ("poisson", "poisson_bridge", "poisson_bridge_sharp"):
         from functions.harmonic_poisson import get_harmonic_solver
 
         solver = get_harmonic_solver(mask, image_size)
         is_contiguous = solver.max_hole_radius >= 16.0
-        eta_hole = 0.95 if is_contiguous else float(getattr(args, "eta_hole", 0.25))
         eta_obs = float(getattr(args, "eta_obs", 0.02))
+        if context_mode == "poisson":
+            eta_hole = 0.95 if is_contiguous else float(getattr(args, "eta_hole", 0.25))
+            edm_sigmas = (3.0, 1.2, 0.4, 0.05) if is_contiguous else None
+            eta_maps = None
+            bridge_alphas = None
+            bridge_blur_sigma = 12.0
+        else:
+            eta_hole = 1.0 if (is_contiguous and context_mode == "poisson_bridge_sharp") else (
+                0.95 if is_contiguous else float(getattr(args, "eta_hole", 0.25))
+            )
+            edm_sigmas = (3.5, 1.6, 0.55, 0.08) if is_contiguous else None
+            if is_contiguous:
+                eta_holes_seq = (1.0, 1.0, 1.0) if context_mode == "poisson_bridge_sharp" else (0.95, 1.0, 1.0)
+                eta_maps = [
+                    compute_eta_map(mask, image_size, eta_hole=eh, eta_obs=eta_obs, device=device)
+                    for eh in eta_holes_seq
+                ]
+                bridge_alphas = (0.40, 0.18, 0.0, 0.0)
+            else:
+                eta_maps = None
+                bridge_alphas = None
+            bridge_blur_sigma = 12.0
+
         eta_map = compute_eta_map(
             mask, image_size, eta_hole=eta_hole, eta_obs=eta_obs, device=device
         )
+        missing_mask = _normalize_mask_2d(mask, image_size).to(device=device, dtype=torch.float32).view(1, 1, image_size, image_size)
         return {
-            "mode": "poisson",
+            "mode": context_mode,
             "mask": mask,
+            "missing_mask": missing_mask,
             "image_size": image_size,
             "solver": solver,
             "max_hole_radius": solver.max_hole_radius,
             "is_contiguous": is_contiguous,
-            "edm_sigmas": (3.0, 1.2, 0.4, 0.05) if is_contiguous else None,
+            "edm_sigmas": edm_sigmas,
             "eta_hole": eta_hole,
             "eta_obs": eta_obs,
             "eta_map": eta_map,
+            "eta_maps": eta_maps,
+            "bridge_alphas": bridge_alphas,
+            "bridge_blur_sigma": bridge_blur_sigma,
         }
 
     raise ValueError(f"Unsupported context_mode: {context_mode!r}")

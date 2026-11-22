@@ -12,7 +12,7 @@ import tqdm
 from datasets import get_dataset, data_transform, inverse_data_transform
 from functions.cm4ir_scheme import cm4ir_restoration
 from functions.context_guidance import build_context_guidance, telea_inpainting
-from functions.harmonic_poisson import harmonic_inpainting
+from functions.harmonic_poisson import harmonic_inpainting, saliency_bridge_inpainting
 from functions.median_inpainting import median_inpainting
 from guided_diffusion.script_util import create_model
 
@@ -116,7 +116,7 @@ class Diffusion(object):
         self.last_run_records = []
         args, config = self.args, self.config
         context_mode = getattr(args, "context_mode", "none")
-        if context_mode not in ("none", "telea", "spatial", "clip", "poisson"):
+        if context_mode not in ("none", "telea", "spatial", "clip", "poisson", "poisson_bridge", "poisson_bridge_sharp"):
             raise ValueError(f"Unsupported context_mode: {context_mode!r}")
         if context_mode != "none" and "inp" not in args.deg:
             raise ValueError(f"context_mode={context_mode!r} is only supported for inpainting tasks, got deg={args.deg!r}")
@@ -311,7 +311,7 @@ class Diffusion(object):
         else:
             raise ValueError("degradation type not supported")
 
-        if context_mode in ("spatial", "clip", "poisson"):
+        if context_mode in ("spatial", "clip", "poisson", "poisson_bridge", "poisson_bridge_sharp"):
             context_guidance = build_context_guidance(
                 args=args,
                 mask=mask,
@@ -406,6 +406,18 @@ class Diffusion(object):
                         mask,
                         self.config.data.channels,
                         self.config.data.image_size,
+                    ).view(
+                        y.shape[0], config.data.channels,
+                        self.config.data.image_size,
+                        self.config.data.image_size,
+                    )
+                elif context_mode in ("poisson_bridge", "poisson_bridge_sharp"):
+                    x = saliency_bridge_inpainting(
+                        Apy,
+                        mask,
+                        self.config.data.channels,
+                        self.config.data.image_size,
+                        gamma=5.0,
                     ).view(
                         y.shape[0], config.data.channels,
                         self.config.data.image_size,

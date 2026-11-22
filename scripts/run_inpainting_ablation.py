@@ -337,6 +337,16 @@ def build_context_params(args: argparse.Namespace) -> dict[str, Any]:
             "contiguous_radius_threshold_px": 16.0,
             "contiguous_edm_sigmas": [3.0, 1.2, 0.4, 0.05],
         }
+    if args.context_mode in ("poisson_bridge", "poisson_bridge_sharp"):
+        return {
+            "eta_obs": float(args.eta_obs),
+            "contiguous_radius_threshold_px": 16.0,
+            "contiguous_edm_sigmas": [3.5, 1.6, 0.55, 0.08],
+            "bridge_gamma": 5.0,
+            "bridge_alphas": [0.40, 0.18, 0.0, 0.0],
+            "bridge_blur_sigma": 12.0,
+            "contiguous_eta_holes": [1.0, 1.0, 1.0] if args.context_mode == "poisson_bridge_sharp" else [0.95, 1.0, 1.0],
+        }
     raise ValueError(f"Unsupported context_mode: {args.context_mode}")
 
 
@@ -890,7 +900,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--eta", type=float, default=0.1)
     parser.add_argument("--deltas", type=str, default="")
     parser.add_argument("--deltas-injection-type", type=int, default=0)
-    parser.add_argument("--context-mode", choices=("none", "telea", "spatial", "clip", "poisson"), default="none")
+    parser.add_argument("--context-mode", choices=("none", "telea", "spatial", "clip", "poisson", "poisson_bridge", "poisson_bridge_sharp"), default="none")
     parser.add_argument("--telea-method", choices=("telea", "ns"), default="telea")
     parser.add_argument("--telea-radius", type=float, default=3.0)
     parser.add_argument("--spatial-sigma", type=float, default=8.0)

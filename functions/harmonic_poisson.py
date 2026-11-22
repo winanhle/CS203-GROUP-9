@@ -8,6 +8,7 @@ import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
 import torch
+import torch.nn.functional as F
 
 
 def compute_max_hole_radius(mask_missing_2d: np.ndarray) -> float:
@@ -186,3 +187,66 @@ def poisson_residual_bp(
 
     resid = obs_mask * (x0_t - y_0_4d)
     return solver.solve_batch(resid)
+
+
+def gaussian_blur_2d(x: torch.Tensor, sigma: float) -> torch.Tensor:
+    if sigma <= 0.0:
+        return x
+    radius = max(1, int(round(3.0 * sigma)))
+    coords = torch.arange(-radius, radius + 1, device=x.device, dtype=x.dtype)
+    k1d = torch.exp(-0.5 * (coords / float(sigma)) ** 2)
+    k1d = k1d / k1d.sum()
+    c = x.shape[1]
+    kx = k1d.view(1, 1, 1, -1).expand(c, 1, 1, -1)
+    ky = k1d.view(1, 1, -1, 1).expand(c, 1, -1, 1)
+    out = F.pad(x, (radius, radius, 0, 0), mode="reflect")
+    out = F.conv2d(out, kx, groups=c)
+    out = F.pad(out, (0, 0, radius, radius), mode="reflect")
+    return F.conv2d(out, ky, groups=c)
+
+
+def saliency_bridge_inpainting(
+    y: torch.Tensor,
+    mask: Union[np.ndarray, torch.Tensor],
+    in_channels: int,
+    image_size: int,
+    gamma: float = 5.0,
+) -> torch.Tensor:
+    original_shape = tuple(y.shape)
+    y_4d = y.reshape(-1, in_channels, image_size, image_size)
+    solver = get_harmonic_solver(mask, image_size)
+    if gamma <= 0.0 or solver.max_hole_radius < 16.0 or solver.n_hole == 0:
+        return solver.solve_batch(y_4d).reshape(original_shape)
+
+    obs_np = (~solver.mask).astype(np.uint8)
+    mask_t = torch.from_numpy(obs_np.astype(np.float32)).to(y_4d.device, y_4d.dtype).view(1, 1, image_size, image_size)
+    eroded_np = cv2.erode(obs_np, np.ones((5, 5), np.uint8), iterations=1)
+    if eroded_np.sum() == 0:
+        eroded_np = obs_np
+    eroded_t = torch.from_numpy(eroded_np.astype(np.float32)).to(y_4d.device, y_4d.dtype).view(1, 1, image_size, image_size)
+    ring_np = (cv2.dilate(1 - obs_np, np.ones((7, 7), np.uint8)) * obs_np) > 0
+    ring_t = torch.from_numpy(ring_np).to(y_4d.device)
+
+    gray = (0.299 * y_4d[:, 0:1] + 0.587 * y_4d[:, 1:2] + 0.114 * y_4d[:, 2:3]) if in_channels == 3 else y_4d[:, 0:1]
+    gray_sm = gaussian_blur_2d(gray * mask_t, 1.5) / gaussian_blur_2d(mask_t, 1.5).clamp(min=1e-4)
+    kx = torch.tensor([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], device=y_4d.device, dtype=y_4d.dtype).view(1, 1, 3, 3) / 8.0
+    gx = F.conv2d(F.pad(gray_sm, (1, 1, 1, 1), mode="reflect"), kx)
+    gy = F.conv2d(F.pad(gray_sm, (1, 1, 1, 1), mode="reflect"), kx.transpose(2, 3))
+    grad_mag = torch.sqrt(gx * gx + gy * gy + 1e-8)
+
+    e_blur3 = gaussian_blur_2d(eroded_t, 3.0).clamp(min=1e-4)
+    mean_rgb = gaussian_blur_2d(y_4d * eroded_t, 3.0) / e_blur3
+    var_rgb = gaussian_blur_2d(((y_4d - mean_rgb) ** 2) * eroded_t, 3.0) / e_blur3
+    local_std = torch.sqrt(var_rgb.mean(dim=1, keepdim=True).clamp(min=0.0) + 1e-8)
+    sal_sm = gaussian_blur_2d((grad_mag + 1.5 * local_std) * eroded_t, 4.0) / gaussian_blur_2d(eroded_t, 4.0).clamp(min=1e-4)
+
+    w_list = []
+    for b in range(y_4d.shape[0]):
+        vals = sal_sm[b, 0][ring_t] if ring_np.any() else sal_sm[b, 0].reshape(-1)
+        p90 = torch.quantile(vals, 0.90).clamp(min=1e-4)
+        w_list.append(1.0 + float(gamma) * (sal_sm[b : b + 1] / p90).clamp(0.0, 1.5))
+    w_sal = torch.cat(w_list, dim=0)
+    num = solver.solve_batch(y_4d * w_sal)
+    den = solver.solve_batch(w_sal).clamp(min=1e-6)
+    out = torch.where(mask_t > 0.5, y_4d, torch.clamp(num / den, -1.0, 1.0))
+    return out.reshape(original_shape)

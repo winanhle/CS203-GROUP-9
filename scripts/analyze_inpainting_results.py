@@ -20,11 +20,23 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 
-CANONICAL_CONDITION_ORDER = ["none", "telea", "spatial", "clip", "clip_neg_ctrl"]
+CANONICAL_CONDITION_ORDER = [
+    "none",
+    "telea",
+    "spatial",
+    "poisson",
+    "poisson_bridge",
+    "poisson_bridge_sharp",
+    "clip",
+    "clip_neg_ctrl",
+]
 CONDITION_DISPLAY_NAMES = {
     "none": "CM4IR (none)",
     "telea": "Telea init",
     "spatial": "Spatial feather",
+    "poisson": "Poisson BP",
+    "poisson_bridge": "Poisson + Bridge (Annealed)",
+    "poisson_bridge_sharp": "Poisson + Bridge (Sharp)",
     "clip": "CLIP null-space",
     "clip_neg_ctrl": "CLIP neg ctrl",
 }

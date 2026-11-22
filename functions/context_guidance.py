@@ -410,4 +410,27 @@ def build_context_guidance(
             "negative_control": clip_negative_control,
         }
 
+    if context_mode == "poisson":
+        from functions.harmonic_poisson import get_harmonic_solver
+
+        solver = get_harmonic_solver(mask, image_size)
+        is_contiguous = solver.max_hole_radius >= 16.0
+        eta_hole = 0.95 if is_contiguous else float(getattr(args, "eta_hole", 0.25))
+        eta_obs = float(getattr(args, "eta_obs", 0.02))
+        eta_map = compute_eta_map(
+            mask, image_size, eta_hole=eta_hole, eta_obs=eta_obs, device=device
+        )
+        return {
+            "mode": "poisson",
+            "mask": mask,
+            "image_size": image_size,
+            "solver": solver,
+            "max_hole_radius": solver.max_hole_radius,
+            "is_contiguous": is_contiguous,
+            "edm_sigmas": (3.0, 1.2, 0.4, 0.05) if is_contiguous else None,
+            "eta_hole": eta_hole,
+            "eta_obs": eta_obs,
+            "eta_map": eta_map,
+        }
+
     raise ValueError(f"Unsupported context_mode: {context_mode!r}")

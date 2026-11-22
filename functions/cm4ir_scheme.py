@@ -3,6 +3,7 @@ import torch
 from tqdm import tqdm
 
 from functions.context_guidance import feather_bp_guidance, steer_clip_null_space
+from functions.harmonic_poisson import poisson_residual_bp
 
 class_num = 951
 
@@ -65,6 +66,9 @@ def cm4ir_restoration(
     if guidance_mode == "spatial":
         spatial_weight_map = context_guidance["weight_map"].to(device=x.device, dtype=x.dtype)
         spatial_eta_map = context_guidance["eta_map"].to(device=x.device, dtype=x.dtype)
+    elif guidance_mode == "poisson":
+        spatial_weight_map = None
+        spatial_eta_map = context_guidance["eta_map"].to(device=x.device, dtype=x.dtype)
     else:
         spatial_weight_map = None
         spatial_eta_map = None
@@ -77,7 +81,13 @@ def cm4ir_restoration(
         for i in range(config.sampling.T_sampling - 1):
             alphas.append(get_next_alpha(alphas[-1], gamma).reshape(1))
 
-        sigma_t = torch.sqrt(1 - alphas[0])
+        edm_sigmas = context_guidance.get("edm_sigmas") if guidance_mode == "poisson" else None
+        if edm_sigmas is not None:
+            sigma_schedule = [torch.tensor([float(s)], device=x.device, dtype=x.dtype) for s in edm_sigmas]
+            sigma_t = sigma_schedule[0]
+        else:
+            sigma_schedule = None
+            sigma_t = torch.sqrt(1 - alphas[0])
         xt = x + torch.randn_like(x) * sigma_t
 
         alphas_next = alphas[1:] + [-1]
@@ -86,19 +96,24 @@ def cm4ir_restoration(
         for at, at_next in tqdm(zip(alphas, alphas_next)):
             iter_ind += 1
 
-            sigma_t = torch.sqrt(1 - at)
-            sigma_t = torch.clamp(sigma_t, sigma_t_min, sigma_t_max)
+            if sigma_schedule is not None:
+                sigma_t = sigma_schedule[iter_ind]
+                delta_cur = 0.0
+            else:
+                sigma_t = torch.sqrt(1 - at)
+                sigma_t = torch.clamp(sigma_t, sigma_t_min, sigma_t_max)
+                delta_cur = deltas[iter_ind]
 
             if deltas_injection_type == 0:
                 scaling_values = get_scalings_for_boundary_condition(sigma_t)
             elif deltas_injection_type == 1:
-                scaling_values = get_scalings_for_boundary_condition((1 + deltas[iter_ind]) * sigma_t)
+                scaling_values = get_scalings_for_boundary_condition((1 + delta_cur) * sigma_t)
             else:
                 raise NotImplementedError(f"Unsupported deltas_injection_type: {deltas_injection_type}."
                                           f"Please view README for optional values.")
 
             c_skip, c_out, c_in = [append_dims(s, xt.ndim) for s in scaling_values]
-            rescaled_sigma_t = 1000 * 0.25 * torch.log((1 + deltas[iter_ind]) * sigma_t + 1e-44)
+            rescaled_sigma_t = 1000 * 0.25 * torch.log((1 + delta_cur) * sigma_t + 1e-44)
 
             if classes is None:
                 et = model(c_in * xt, rescaled_sigma_t)
@@ -134,13 +149,20 @@ def cm4ir_restoration(
                     spatial_sigma=context_guidance["spatial_sigma"],
                     weight_map=spatial_weight_map,
                 )
+            elif guidance_mode == "poisson":
+                BP_guidance = context_guidance["solver"].solve_batch(BP_guidance)
             xt = x0_t - (mu * mu_factor ** iter_ind) * BP_guidance
+            if guidance_mode == "poisson":
+                xt = torch.clamp(xt, -1.0, 1.0)
 
             if at_next != -1:
-                next_sigma_t = torch.sqrt(1 - at_next)
-                next_sigma_t = torch.clamp(next_sigma_t, sigma_t_min, sigma_t_max)
+                if sigma_schedule is not None:
+                    next_sigma_t = sigma_schedule[iter_ind + 1]
+                else:
+                    next_sigma_t = torch.sqrt(1 - at_next)
+                    next_sigma_t = torch.clamp(next_sigma_t, sigma_t_min, sigma_t_max)
 
-                if guidance_mode == "spatial":
+                if guidance_mode in ("spatial", "poisson"):
                     c1 = next_sigma_t * spatial_eta_map
                     c2 = next_sigma_t * torch.sqrt(torch.clamp(1.0 - spatial_eta_map ** 2, min=0.0))
                 else:

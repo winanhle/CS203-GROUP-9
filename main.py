@@ -99,7 +99,7 @@ def build_parser():
     parser.add_argument(
         "--context_mode",
         type=str,
-        choices=["none", "telea", "spatial", "clip"],
+        choices=["none", "telea", "spatial", "clip", "poisson"],
         default="none",
         help="Context-aware inpainting guidance mode.",
     )

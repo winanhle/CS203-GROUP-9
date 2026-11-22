@@ -12,6 +12,7 @@ import tqdm
 from datasets import get_dataset, data_transform, inverse_data_transform
 from functions.cm4ir_scheme import cm4ir_restoration
 from functions.context_guidance import build_context_guidance, telea_inpainting
+from functions.harmonic_poisson import harmonic_inpainting
 from functions.median_inpainting import median_inpainting
 from guided_diffusion.script_util import create_model
 
@@ -115,7 +116,7 @@ class Diffusion(object):
         self.last_run_records = []
         args, config = self.args, self.config
         context_mode = getattr(args, "context_mode", "none")
-        if context_mode not in ("none", "telea", "spatial", "clip"):
+        if context_mode not in ("none", "telea", "spatial", "clip", "poisson"):
             raise ValueError(f"Unsupported context_mode: {context_mode!r}")
         if context_mode != "none" and "inp" not in args.deg:
             raise ValueError(f"context_mode={context_mode!r} is only supported for inpainting tasks, got deg={args.deg!r}")
@@ -310,7 +311,7 @@ class Diffusion(object):
         else:
             raise ValueError("degradation type not supported")
 
-        if context_mode in ("spatial", "clip"):
+        if context_mode in ("spatial", "clip", "poisson"):
             context_guidance = build_context_guidance(
                 args=args,
                 mask=mask,
@@ -394,6 +395,17 @@ class Diffusion(object):
                         self.config.data.image_size,
                         method=getattr(args, "telea_method", "telea"),
                         radius=getattr(args, "telea_radius", 3.0),
+                    ).view(
+                        y.shape[0], config.data.channels,
+                        self.config.data.image_size,
+                        self.config.data.image_size,
+                    )
+                elif context_mode == "poisson":
+                    x = harmonic_inpainting(
+                        Apy,
+                        mask,
+                        self.config.data.channels,
+                        self.config.data.image_size,
                     ).view(
                         y.shape[0], config.data.channels,
                         self.config.data.image_size,

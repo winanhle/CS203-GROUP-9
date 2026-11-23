@@ -27,6 +27,8 @@ CANONICAL_CONDITION_ORDER = [
     "poisson",
     "poisson_bridge",
     "poisson_bridge_sharp",
+    "poisson_bridge_freq",
+    "poisson_bridge_feather",
     "clip",
     "clip_neg_ctrl",
 ]
@@ -37,6 +39,8 @@ CONDITION_DISPLAY_NAMES = {
     "poisson": "Poisson BP",
     "poisson_bridge": "Poisson + Bridge (Annealed)",
     "poisson_bridge_sharp": "Poisson + Bridge (Sharp)",
+    "poisson_bridge_freq": "Poisson + Bridge (Freq)",
+    "poisson_bridge_feather": "Poisson + Bridge (Feather)",
     "clip": "CLIP null-space",
     "clip_neg_ctrl": "CLIP neg ctrl",
 }

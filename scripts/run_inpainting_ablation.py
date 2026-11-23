@@ -337,15 +337,16 @@ def build_context_params(args: argparse.Namespace) -> dict[str, Any]:
             "contiguous_radius_threshold_px": 16.0,
             "contiguous_edm_sigmas": [3.0, 1.2, 0.4, 0.05],
         }
-    if args.context_mode in ("poisson_bridge", "poisson_bridge_sharp"):
+    if args.context_mode in ("poisson_bridge", "poisson_bridge_sharp", "poisson_bridge_freq", "poisson_bridge_feather"):
+        is_freq = args.context_mode in ("poisson_bridge_freq", "poisson_bridge_feather")
         return {
             "eta_obs": float(args.eta_obs),
             "contiguous_radius_threshold_px": 16.0,
             "contiguous_edm_sigmas": [3.5, 1.6, 0.55, 0.08],
             "bridge_gamma": 5.0,
-            "bridge_alphas": [0.40, 0.18, 0.0, 0.0],
-            "bridge_blur_sigma": 12.0,
-            "contiguous_eta_holes": [1.0, 1.0, 1.0] if args.context_mode == "poisson_bridge_sharp" else [0.95, 1.0, 1.0],
+            "bridge_alphas": [0.50, 0.22, 0.0, 0.0] if is_freq else [0.40, 0.18, 0.0, 0.0],
+            "bridge_blur_sigma": 10.0 if is_freq else 12.0,
+            "contiguous_eta_holes": [1.0, 1.0, 1.0] if args.context_mode in ("poisson_bridge_sharp", "poisson_bridge_freq", "poisson_bridge_feather") else [0.95, 1.0, 1.0],
         }
     raise ValueError(f"Unsupported context_mode: {args.context_mode}")
 

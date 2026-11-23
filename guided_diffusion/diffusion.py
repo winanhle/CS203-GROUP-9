@@ -116,7 +116,17 @@ class Diffusion(object):
         self.last_run_records = []
         args, config = self.args, self.config
         context_mode = getattr(args, "context_mode", "none")
-        if context_mode not in ("none", "telea", "spatial", "clip", "poisson", "poisson_bridge", "poisson_bridge_sharp"):
+        if context_mode not in (
+            "none",
+            "telea",
+            "spatial",
+            "clip",
+            "poisson",
+            "poisson_bridge",
+            "poisson_bridge_sharp",
+            "poisson_bridge_freq",
+            "poisson_bridge_feather",
+        ):
             raise ValueError(f"Unsupported context_mode: {context_mode!r}")
         if context_mode != "none" and "inp" not in args.deg:
             raise ValueError(f"context_mode={context_mode!r} is only supported for inpainting tasks, got deg={args.deg!r}")
@@ -307,7 +317,15 @@ class Diffusion(object):
         else:
             raise ValueError("degradation type not supported")
 
-        if context_mode in ("spatial", "clip", "poisson", "poisson_bridge", "poisson_bridge_sharp"):
+        if context_mode in (
+            "spatial",
+            "clip",
+            "poisson",
+            "poisson_bridge",
+            "poisson_bridge_sharp",
+            "poisson_bridge_freq",
+            "poisson_bridge_feather",
+        ):
             context_guidance = build_context_guidance(
                 args=args,
                 mask=mask,
